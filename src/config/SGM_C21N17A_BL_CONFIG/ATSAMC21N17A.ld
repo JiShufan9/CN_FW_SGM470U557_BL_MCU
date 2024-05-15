@@ -92,8 +92,8 @@ MEMORY
 {
   rom (LRX) : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
   ram (WX!R) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH
-  config_00804000 : ORIGIN = 0x00804000, LENGTH = 0x4
-  config_00804004 : ORIGIN = 0x00804004, LENGTH = 0x4
+  config_00808000 : ORIGIN = 0x00808000, LENGTH = 0x4
+  config_00808004 : ORIGIN = 0x00808004, LENGTH = 0x4
 
 }
 
@@ -130,12 +130,12 @@ __ram_end = ORIGIN(ram) + LENGTH(ram);
  *************************************************************************/
 SECTIONS
 {
-    .config_00804000 : {
-      KEEP(*(.config_00804000))
-    } > config_00804000
-    .config_00804004 : {
-      KEEP(*(.config_00804004))
-    } > config_00804004
+    .config_00808000 : {
+      KEEP(*(.config_00808000))
+    } > config_00808000
+    .config_00808004 : {
+      KEEP(*(.config_00808004))
+    } > config_00808004
 
     /*
      * The linker moves the .vectors section into itcm when itcm is
