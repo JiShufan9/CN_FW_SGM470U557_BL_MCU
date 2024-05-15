@@ -35,8 +35,8 @@
 #define	portI2C_SCL_DES_SLAVE	PORT_A
 #define	pinI2C_SCL_DES_SLAVE	BIT9
 
-#define	portMAX20048_EN1	PORT_A
-#define	pinMAX20048_EN1		BIT10
+#define	portMPQ3365A_EN	PORT_A
+#define	pinMPQ3365A_EN		BIT10
 
 #define	portMAX20048_EN2	PORT_A
 #define	pinMAX20048_EN2		BIT18
@@ -44,8 +44,8 @@
 #define	portTCON_RESET		PORT_A
 #define	pinTCON_RESET		BIT20
 
-#define	portTCON_PWMI		PORT_A
-#define	pinTCON_PWMI		BIT21
+#define	portMPQ3365A_PWMI		PORT_A
+#define	pinMPQ3365A_PWMI		BIT21
 
 #define	portPCBA_A3		PORT_A
 #define	pinPCBA_A3		BIT27
@@ -66,8 +66,8 @@
 #define	portPDB			PORT_B
 #define	pinPDB			BIT4
 
-#define	portMCU_5V_EN	PORT_B
-#define	pinMCU_5V_EN	BIT6
+#define	portMCU_3V3_EN	PORT_B
+#define	pinMCU_3V3_EN	BIT6
 
 #define	portWAKE_REQUEST_V_RCV	PORT_B
 #define	pinWAKE_REQUEST_V_RCV	BIT10
@@ -105,8 +105,8 @@
 #define	portMCU_WDI			PORT_C
 #define	pinMCU_WDI			BIT25
 
-#define	portMCU_3V3_1V1_EN	PORT_C
-#define	pinMCU_3V3_1V1_EN	BIT28
+#define	portMCU_1V8_1V1_EN	PORT_C
+#define	pinMCU_1V8_1V1_EN	BIT28
 
 #define	portVCUWakeC			PORT_A      /* pin 38 */
 #define	pinVCUWakeC             BIT6

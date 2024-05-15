@@ -61,7 +61,7 @@ ENTRY(__XC32_RESET_HANDLER_NAME)
  * calling the linker via the xc32-gcc shell.
  *************************************************************************/
 
-#  define ROM_LENGTH 0x4000     /* Bootloader Size = 16KB(0x4000), 32KB(0x8000) */
+#  define ROM_LENGTH 0x8000     /* Bootloader Size = 16KB(0x4000), 32KB(0x8000) */
 #  define ROM_ORIGIN 0x0
 
 #ifndef ROM_ORIGIN
