@@ -1,0 +1,141 @@
+/*******************************************************************************
+  Power Manager(PM) PLIB
+
+  Company
+    Microchip Technology Inc.
+
+  File Name
+    plib_pm.c
+
+  Summary
+    PM PLIB Implementation File.
+
+  Description
+    This file defines the interface to the PM peripheral library. This
+    library provides access to and control of the associated peripheral
+    instance.
+
+  Remarks:
+    None.
+
+*******************************************************************************/
+
+// DOM-IGNORE-BEGIN
+/*******************************************************************************
+* Copyright (C) 2019 Microchip Technology Inc. and its subsidiaries.
+*
+* Subject to your compliance with these terms, you may use Microchip software
+* and any derivatives exclusively with Microchip products. It is your
+* responsibility to comply with third party license terms applicable to your
+* use of third party software (including open source software) that may
+* accompany Microchip software.
+*
+* THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
+* EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
+* WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
+* PARTICULAR PURPOSE.
+*
+* IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
+* INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
+* WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
+* BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
+* FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
+* ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
+* THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
+*******************************************************************************/
+// DOM-IGNORE-END
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: Included Files
+// *****************************************************************************
+// *****************************************************************************
+/* This section lists the other files that are included in this file.
+*/
+#include "hal/plib_auo/inc/ll_pm.h"
+
+#if 0
+uint16_t LL_PM_Initialize( uint8_t u8Nothing)
+{
+    uint16_t u16Return;
+    uint16_t u16ConfigTemp;
+    
+    (void)u8Nothing;
+    
+    /* Configure PM */
+    u16ConfigTemp = PM_STDBYCFG_BBIASHS(0x01U)| PM_STDBYCFG_VREGSMOD(VREGSMOD_LP);
+    PM_REGS->PM_STDBYCFG = u16ConfigTemp;
+    
+    if(PM_REGS->PM_STDBYCFG == u16ConfigTemp)
+    {
+        u16Return = DRIVER_TRUE;
+    }
+    else
+    {
+        u16Return = DRIVER_FALSE;
+    }
+
+    return u16Return;
+}
+#endif
+
+#if 0
+uint16_t LL_PM_IdleModeEnter( uint8_t u8Nothing )
+{
+    (void)u8Nothing;
+    uint8_t u8PMSleepStatus;
+    /* Configure Idle Sleep mode */
+    PM_REGS->PM_SLEEPCFG = PM_SLEEPCFG_SLEEPMODE_IDLE_Val;
+
+    /* Ensure that SLEEPMODE bits are configured with the given value */
+    u8PMSleepStatus = DRIVER_TRUE;
+    while (u8PMSleepStatus == (uint8_t)DRIVER_TRUE)
+    {
+        if((PM_REGS->PM_SLEEPCFG & PM_SLEEPCFG_SLEEPMODE_IDLE_Val)!=PM_SLEEPCFG_SLEEPMODE_IDLE_Val)
+        {
+            u8PMSleepStatus = DRIVER_TRUE;
+        }
+        else
+        {
+            u8PMSleepStatus = DRIVER_FALSE;
+        }
+    }
+
+    /* Wait for interrupt instruction execution */
+    /*__WFI(); */
+#if MICROCHIP_ARM_ENV
+    __ASM volatile ("wfi");
+#endif
+    return u8Nothing;
+}
+#endif
+
+uint16_t LL_PM_StandbyModeEnter(void)
+{
+    uint8_t u8PMSleepStatus;
+    uint32_t u32SWITCondition = PM_SLEEPCFG_SLEEPMODE_STANDBY_Val;
+    /* Configure Standby Sleep */
+    PM_REGS->PM_STDBYCFG = PM_STDBYCFG_BBIASHS_Msk| PM_STDBYCFG_VREGSMOD(VREGSMOD_LP);
+    PM_REGS->PM_SLEEPCFG = PM_SLEEPCFG_SLEEPMODE_STANDBY_Val;
+
+    /* Ensure that SLEEPMODE bits are configured with the given value */
+    u8PMSleepStatus = DRIVER_TRUE;
+    while (u8PMSleepStatus == (uint8_t)DRIVER_TRUE)
+    {
+        if((PM_REGS->PM_SLEEPCFG & PM_SLEEPCFG_SLEEPMODE_STANDBY_Val)!=u32SWITCondition)
+        {
+            u8PMSleepStatus = DRIVER_TRUE;
+        }
+        else
+        {
+            u8PMSleepStatus = DRIVER_FALSE;
+        }
+    }
+
+    /* Wait for interrupt instruction execution */
+    /*__WFI(); */
+#if MICROCHIP_ARM_ENV
+    __ASM volatile ("wfi");
+#endif
+    return true;
+}

@@ -1,0 +1,151 @@
+/******************************************************************************
+;Program:I2CMASTERAPP.C
+;FUNCTION:DECLEAR SERCOM3 I2C MASTER APPLICATION FUNCTION FOR TCON
+;DATE:2021/11/16
+;AUTHOR:ORLANDO HUANG
+;DESCRIBE:
+;           1.CONTROL TCON TO PRODUCE BACKLIGHT CONTROL SIGNAL 
+******************************************************************************/
+/*---------------------------- Include File ---------------------------------*/
+#include"app/inc/I2cMasterApp.h"
+/*---------------------------- Declare Global Variable ----------------------*/
+static st_i2c_master_config gAPPI2cTcon;
+/*---------------------------- Start Program --------------------------------*/
+/******************************************************************************
+;Author: Orlando Huang
+;Description: N/A
+;Return Parameter: {*}
+;param {uint8_t} u8Master
+******************************************************************************/
+bool I2cMasterApp_Master_Initial(uint8_t u8Master)
+{
+    bool bReturn = false;
+
+    switch(u8Master)
+    {
+        case I2C_MASTER_SERCOM_3:
+            gAPPI2cTcon.addr = ADDR_TCON;
+            gAPPI2cTcon.channel = SERCOM_CH3;
+            gAPPI2cTcon.speed = STANDARD_MODE;
+            gAPPI2cTcon.baudrate = 400U;
+            gAPPI2cTcon.callback = NULL;
+            gAPPI2cTcon.inte.error_int = false;
+            gAPPI2cTcon.inte.master_on_bus = true;
+            gAPPI2cTcon.inte.slave_on_bus = true;
+
+            bReturn = master_i2c_init(&gAPPI2cTcon);
+            (void)master_i2c_interrupt(&gAPPI2cTcon);
+        break;
+
+        default:
+            bReturn = false;
+        break;
+    }
+
+    return bReturn;
+}
+/******************************************************************************
+;Author: Orlando Huang
+;Description: N/A
+;Return Parameter: {*}
+;param {uint8_t} u8Master
+******************************************************************************/
+bool I2cMasterApp_DeInitial(uint8_t u8Master)
+{
+    bool bReturn = false;
+
+    switch(u8Master)
+    {
+        case I2C_MASTER_SERCOM_3:
+            (void)master_i2c_stop(SERCOM_CH3);
+            __NVIC_DisableIRQ(SERCOM3_IRQn);
+
+            bReturn = true;
+        break;
+
+        default:
+
+            bReturn = false;
+        break;
+    }
+
+    return bReturn;
+}
+#if I2CMASTERAPP_ENABLE_TX
+/******************************************************************************
+;Author: Orlando Huang
+;Description: N/A
+;Return Parameter: {*}
+;param {uint8_t} u8Address
+;param {uint8_t} *u8Data
+;param {uint8_t} u8Len
+******************************************************************************/
+bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
+{
+    uint32_t u32Len = (uint32_t)u8Len;
+	uint32_t u32Jump = 0UL;
+
+    switch(u8Master)
+    {
+        case I2C_MASTER_SERCOM_3:
+            if (true == master_i2c_transmitte(&gAPPI2cTcon, u8Data, u32Len))
+            {
+                while((true == SERCOM_I2CM_IsBusy(gAPPI2cTcon.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
+                {
+                    u32Jump += 1UL;
+                }
+            }
+            else
+            {
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
+            }
+        break;
+
+        default:
+            /* NOTHING */
+        break;
+    }
+
+    return true;
+}
+#endif
+/******************************************************************************
+;FUNCTION NAME:I2cMasterApp_Rx
+;DATE:2021/11/16
+;AUTHOR:Orlando Huang
+;DESCRIBE:
+;INPUT VARIABLE:uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8_t *u8RxData, uint8_t u8RxLen
+;OUTPUT VARIABLE:bool
+******************************************************************************/
+#if I2CMASTERAPP_ENABLE_RX
+bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8_t *u8RxData, uint8_t u8RxLen)
+{
+	uint32_t u32Jump = 0UL;
+	uint32_t u32TxLen = (uint32_t)u8TxLen;
+	uint32_t u32RxLen = (uint32_t)u8RxLen;
+
+    switch(u8Master)
+    {
+        case I2C_MASTER_SERCOM_3:
+            if(true == master_i2c_writeread(&gAPPI2cTcon, u8TxData, u32TxLen, u8RxData, u32RxLen))
+            {
+                while((true == SERCOM_I2CM_IsBusy(gAPPI2cTcon.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
+                {
+                    u32Jump += 1UL;
+                }
+            }
+            else
+            {
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
+            }
+        break;
+
+        default:
+            /* NOTHING */
+        break;
+    }
+
+    return true;
+}
+#endif
+/*--------------------------------------END-------------------------------*/
