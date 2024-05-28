@@ -38,42 +38,42 @@
 #define	portMPQ3365A_EN	PORT_A
 #define	pinMPQ3365A_EN		BIT10
 
-#define	portMAX20048_EN2	PORT_A
-#define	pinMAX20048_EN2		BIT18
+#define	portXRES_TP				PORT_A
+#define	pinXRES_TP				BIT18
 
-#define	portTCON_RESET		PORT_A
-#define	pinTCON_RESET		BIT20
+#define	portTCON_RESET			PORT_A
+#define	pinTCON_RESET			BIT20
 
 #define	portMPQ3365A_PWMI		PORT_A
 #define	pinMPQ3365A_PWMI		BIT21
 
-#define	portPCBA_A3		PORT_A
-#define	pinPCBA_A3		BIT27
-#define IO_PCBA_A3		IO_PIN_PA27
+#define	portPCBA_A3				PORT_A
+#define	pinPCBA_A3				BIT27
+#define IO_PCBA_A3				IO_PIN_PA27
 
-#define	portPCBA_A2		PORT_A
-#define	pinPCBA_A2		BIT28
-#define	IO_PCBA_A2		IO_PIN_PA28
+#define	portPCBA_A2				PORT_A
+#define	pinPCBA_A2				BIT28
+#define	IO_PCBA_A2				IO_PIN_PA28
 
-#define	portPCBA_A0		PORT_B
-#define	pinPCBA_A0		BIT0
-#define	IO_PCBA_A0		IO_PIN_PB00
+#define	portPCBA_A0				PORT_B
+#define	pinPCBA_A0				BIT0
+#define	IO_PCBA_A0				IO_PIN_PB00
 
-#define	portPCBA_A1		PORT_B
-#define	pinPCBA_A1		BIT1
-#define	IO_PCBA_A1		IO_PIN_PB01
+#define	portPCBA_A1				PORT_B
+#define	pinPCBA_A1				BIT1
+#define	IO_PCBA_A1				IO_PIN_PB01
 
-#define	portPDB			PORT_B
-#define	pinPDB			BIT4
+#define	portPDB					PORT_B
+#define	pinPDB					BIT4
 
-#define	portMCU_3V3_EN	PORT_B
-#define	pinMCU_3V3_EN	BIT6
+#define	portMCU_3V3_EN			PORT_B
+#define	pinMCU_3V3_EN			BIT6
 
 #define	portWAKE_REQUEST_V_RCV	PORT_B
 #define	pinWAKE_REQUEST_V_RCV	BIT10
 
-#define	portXON			PORT_B
-#define	pinXON			BIT19
+#define	portXON					PORT_B
+#define	pinXON					BIT19
 
 #define	portTCON_BIST		PORT_B
 #define	pinTCON_BIST		BIT20
@@ -96,17 +96,20 @@
 #define	portMCU_INT			PORT_C
 #define	pinMCU_INT			BIT0
 
+#define	portMCU_1V35_EN		PORT_C
+#define	pinMCU_1V35_EN		BIT19
+
 #define	portMCU_1V8_EN		PORT_C
-#define	pinMCU_1V8_EN		BIT19
+#define	pinMCU_1V8_EN		BIT16
 
 #define	portMCU_WD_RESET	PORT_C
 #define	pinMCU_WD_RESET		BIT24
 
-#define	portMCU_WDI			PORT_C
-#define	pinMCU_WDI			BIT25
+#define	portLCD_BIAS		PORT_C
+#define	pinLCD_BIAS			BIT25
 
-#define	portMCU_1V8_1V1_EN	PORT_C
-#define	pinMCU_1V8_1V1_EN	BIT28
+#define	portMCU_1V1_EN		PORT_C
+#define	pinMCU_1V1_EN		BIT28
 
 #define	portVCUWakeC			PORT_A      /* pin 38 */
 #define	pinVCUWakeC             BIT6
