@@ -96,8 +96,8 @@
 #define	portMCU_INT			PORT_C
 #define	pinMCU_INT			BIT0
 
-#define	portMCU_1V8_EN		PORT_C
-#define	pinMCU_1V8_EN		BIT19
+#define	portMCU_1V8_EN      PORT_C
+#define	pinMCU_1V8_EN       BIT16
 
 #define	portMCU_WD_RESET	PORT_C
 #define	pinMCU_WD_RESET		BIT24
@@ -105,8 +105,8 @@
 #define	portMCU_WDI			PORT_C
 #define	pinMCU_WDI			BIT25
 
-#define	portMCU_1V8_1V1_EN	PORT_C
-#define	pinMCU_1V8_1V1_EN	BIT28
+#define	portMCU_1V1_EN      PORT_C
+#define	pinMCU_1V1_EN       BIT28
 
 #define	portVCUWakeC			PORT_A      /* pin 38 */
 #define	pinVCUWakeC             BIT6

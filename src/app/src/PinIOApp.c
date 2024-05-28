@@ -81,42 +81,43 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
 	{
 		case SYS_PWR_ON:
             (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
-            (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);  /* Disable WakeUp Host Pin */
+            (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);          /* Disable WakeUp Host Pin */
             (void)PinIOApp_High(portBATT_SENSE_EN, pinBATT_SENSE_EN);       
             (void)PinIOApp_High(portMCU_3V3_EN, pinMCU_3V3_EN);
-            (void)FunApp_Delay_Millisecond(10, MODE_SYSTICK);   /* Delay 10ms */                 
-            (void)PinIOApp_High(portMCU_1V8_1V1_EN, pinMCU_1V8_1V1_EN);
-            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);    /* Delay 2ms */
+            (void)FunApp_Delay_Millisecond(10, MODE_SYSTICK);                           /* Delay 10ms */                 
+            (void)PinIOApp_High(portMCU_1V8_EN, pinMCU_1V8_EN);                 
+            (void)PinIOApp_High(portMCU_1V1_EN, pinMCU_1V1_EN);
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */
             (void)PinIOApp_High(portPDB, pinPDB);
             (void)PinIOApp_High(portMCU_INT, pinMCU_INT);
-            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);    /* Delay 2ms */
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */
             (void)PinIOApp_High(portXON, pinXON);
-            (void)FunApp_Delay_Millisecond(8, MODE_SYSTICK);                        /* Delay 8ms */     
-            (void)PinIOApp_High(portMPQ3365A_EN, pinMPQ3365A_EN);   
-            (void)FunApp_Delay_Millisecond(16, MODE_SYSTICK);                        /* Delay 16ms */     
+            (void)FunApp_Delay_Millisecond(26, MODE_SYSTICK);                           /* Delay 26ms */       
             (void)PinIOApp_High(portDRIVER_RESET, pinDRIVER_RESET);
-            (void)FunApp_Delay_Millisecond(1, MODE_SYSTICK);    /* Delay 1ms */         
-            (void)PinIOApp_High(portMPQ3365A_PWMI, pinMPQ3365A_PWMI);             
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */         
+            (void)PinIOApp_High(portMPQ3365A_PWMI, pinMPQ3365A_PWMI);        
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */     
+            (void)PinIOApp_High(portMPQ3365A_EN, pinMPQ3365A_EN);      
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */ 
 		break;
 		
 		case SYS_PWR_OFF:
             (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);
             (void)PinIOApp_Low(portMCU_INT, pinMCU_INT);
+            (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
             (void)PinIOApp_Low(portMPQ3365A_PWMI, pinMPQ3365A_PWMI);
             (void)FunApp_Delay_Millisecond(1, MODE_SYSTICK);    /* Delay 1ms */
-            (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
-            (void)FunApp_Delay_Millisecond(1, MODE_SYSTICK);    /* Delay 1ms */
             (void)PinIOApp_Low(portDRIVER_RESET, pinDRIVER_RESET);
-            (void)FunApp_Delay_Millisecond(150U, MODE_SYSTICK);  /* Delay 150ms */
+            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
             (void)PinIOApp_Low(portXON, pinXON);
-            (void)FunApp_Delay_Millisecond(17U, MODE_SYSTICK);  /* Delay 17ms */
+            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
             (void)PinIOApp_Low(portPDB, pinPDB);
+            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK); /* Delay 1ms */
+            (void)PinIOApp_Low(portMCU_1V1_EN, pinMCU_1V1_EN);
+            (void)PinIOApp_Low(portMCU_1V8_EN, pinMCU_1V8_EN);
+            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK); /* Delay 1ms */
             (void)PinIOApp_Low(portMCU_3V3_EN, pinMCU_3V3_EN);
-            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK); /* Delay 1ms */
-            (void)PinIOApp_Low(portMCU_1V8_1V1_EN, pinMCU_1V8_1V1_EN);
-            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK); /* Delay 1ms */
-            (void)PinIOApp_Low(portBATT_SENSE_EN, pinBATT_SENSE_EN);
-            (void)FunApp_Delay_Millisecond(5U, MODE_SYSTICK); /* Delay 5ms */                           				
+            (void)PinIOApp_Low(portBATT_SENSE_EN, pinBATT_SENSE_EN);                      				
 		break;
         
 		default:
@@ -167,7 +168,6 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
    PORT_REGS->GROUP[1].PORT_DIR = 0x1480450U;
    PORT_REGS->GROUP[1].PORT_PINCFG[0] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[1] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[2] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[3] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[5] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[7] = 0x3U;
@@ -186,7 +186,7 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
    PORT_REGS->GROUP[1].PORT_PMUX[15] = 0x22U;
 
    /************************** GROUP 2 Initialization *************************/
-   PORT_REGS->GROUP[2].PORT_DIR = 0x10040061U;
+   PORT_REGS->GROUP[2].PORT_DIR = 0x10050061U;
    PORT_REGS->GROUP[2].PORT_OUT = 0x20U;
    PORT_REGS->GROUP[2].PORT_PINCFG[1] = 0x2U;
    PORT_REGS->GROUP[2].PORT_PINCFG[2] = 0x2U;
