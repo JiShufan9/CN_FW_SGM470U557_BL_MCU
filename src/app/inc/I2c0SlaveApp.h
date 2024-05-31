@@ -93,9 +93,9 @@
 
 /* Memory Address Setting */
 #define     ADDR_APP_START      0x8000U     /* 0x4000U for 16KB, 0x8000U for 32KB */
-#define     ADDR_CUSTOMER_ID    0x13FE0U    /* 0x13FE0 ~ 0x13FE7 (8 bytes) for 16KB, 0x17FE0 ~ 0x17FE7 (8 bytes) for 32KB */    
-#define     ADDR_FIDM_VER       0x13FF0U    /* 0x13FF0 ~ 0x13FF7 (8 bytes) for 16KB, 0x17FF0 ~ 0x17FF7 (8 bytes) for 32KB */
-#define     ADDR_APP_CRC32      0x13FFCU    /* 0x13FFC ~ 0x13FFF (4 bytes) for 16KB, 0x17FFC ~ 0x17FFF (4 bytes) for 32KB */
+#define     ADDR_CUSTOMER_ID    0x17FE0U    /* 0x13FE0 ~ 0x13FE7 (8 bytes) for 16KB, 0x17FE0 ~ 0x17FE7 (8 bytes) for 32KB */    
+#define     ADDR_FIDM_VER       0x17FF0U    /* 0x13FF0 ~ 0x13FF7 (8 bytes) for 16KB, 0x17FF0 ~ 0x17FF7 (8 bytes) for 32KB */
+#define     ADDR_APP_CRC32      0x17FFCU    /* 0x13FFC ~ 0x13FFF (4 bytes) for 16KB, 0x17FFC ~ 0x17FFF (4 bytes) for 32KB */
 
 /* Bootloader Status Flags Packets - Bootloader Status 1 */
 #define     SET_BL_ACTIVE               0x01U
