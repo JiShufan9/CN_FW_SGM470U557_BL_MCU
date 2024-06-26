@@ -12,11 +12,6 @@
 #include "hal/inc/PortDriver.h"
 /*---------------------------- Delcare Content  ----------------------------*/
 #define	PARA_ODD_EVEN_NUM	2U
-/* Hw VerPins */
-#define		SET_PCBA_A3		0x1000U
-#define		SET_PCBA_A2		0x0100U	
-#define		SET_PCBA_A1		0x0010U
-#define		SET_PCBA_A0		0x0001U
 
 /*---------------------------- IPC I/O Pin Definition ---------------------------*/	
 

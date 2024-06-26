@@ -109,7 +109,7 @@ enum Switch{
 /* Display ID */
 typedef enum DisplayIDType
 {   
-    C304_DISPLAY_ID 	= 0x09U,
+    C304_DISPLAY_ID 	= 0xC6U,
 	IPC_EDGE_CS2_HW3	= 0x19U,
 	IPC_EDGE_CS3_HW3	= 0x19U,
 	IPC_DIRECT_CS2_HW3	= 0x24U,
