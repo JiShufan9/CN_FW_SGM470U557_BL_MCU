@@ -81,7 +81,7 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
 	{
 		case SYS_PWR_ON:
             (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
-            (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);  /* Disable WakeUp Host Pin */
+            (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);          /* Disable WakeUp Host Pin */
             (void)PinIOApp_High(portBATT_SENSE_EN, pinBATT_SENSE_EN);       
             (void)PinIOApp_High(portMCU_3V3_EN, pinMCU_3V3_EN);
             (void)FunApp_Delay_Millisecond(10, MODE_SYSTICK);   /* Delay 10ms */                 
@@ -92,7 +92,7 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
             (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);    /* Delay 2ms */
             (void)PinIOApp_High(portPDB, pinPDB);
             (void)PinIOApp_High(portMCU_INT, pinMCU_INT);
-            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);    /* Delay 2ms */
+            (void)FunApp_Delay_Millisecond(2, MODE_SYSTICK);                            /* Delay 2ms */
             (void)PinIOApp_High(portXON, pinXON);
             (void)FunApp_Delay_Millisecond(26, MODE_SYSTICK);                        /* Delay 8ms */     
             (void)PinIOApp_High(portXRES_TP, pinXRES_TP);
@@ -108,6 +108,7 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
             (void)PinIOApp_Low(portWAKE_REQUEST_V_RCV, pinWAKE_REQUEST_V_RCV);
             (void)PinIOApp_Low(portMCU_INT, pinMCU_INT);
             (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
+            (void)PinIOApp_Low(portMPQ3365A_EN, pinMPQ3365A_EN);
             (void)PinIOApp_Low(portMPQ3365A_PWMI, pinMPQ3365A_PWMI);
             (void)FunApp_Delay_Millisecond(1, MODE_SYSTICK);    /* Delay 1ms */
             (void)FunApp_Delay_Millisecond(1, MODE_SYSTICK);    /* Delay 1ms */
@@ -116,6 +117,7 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
             (void)PinIOApp_Low(portXRES_TP, pinXRES_TP);
             (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
             (void)PinIOApp_Low(portXON, pinXON);
+            (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
             (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
             (void)PinIOApp_Low(portPDB, pinPDB);
             (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);  /* Delay 1ms */
@@ -148,24 +150,17 @@ bool PinIOApp_System_Power(uint8_t u8Switch)
 uint8_t PinIOApp_Init(uint8_t u8Para)
 {
    /************************** GROUP 0 Initialization *************************/
-   PORT_REGS->GROUP[0].PORT_DIR = 0x3c040cU;
-   PORT_REGS->GROUP[0].PORT_PINCFG[2] = 0x0U;
+   PORT_REGS->GROUP[0].PORT_DIR = 0x01FEB416U;
+   PORT_REGS->GROUP[1].PORT_OUT = 0x02050BA0U;
    PORT_REGS->GROUP[0].PORT_PINCFG[3] = 0x3U;
    PORT_REGS->GROUP[0].PORT_PINCFG[5] = 0x1U;
    PORT_REGS->GROUP[0].PORT_PINCFG[6] = 0x3U;
    PORT_REGS->GROUP[0].PORT_PINCFG[7] = 0x1U;
    PORT_REGS->GROUP[0].PORT_PINCFG[8] = 0x1U;
    PORT_REGS->GROUP[0].PORT_PINCFG[9] = 0x1U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[10] = 0x0U;
    PORT_REGS->GROUP[0].PORT_PINCFG[11] = 0x2U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[12] = 0x1U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[13] = 0x1U;
    PORT_REGS->GROUP[0].PORT_PINCFG[16] = 0x2U;
    PORT_REGS->GROUP[0].PORT_PINCFG[17] = 0x2U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[18] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[19] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[20] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PINCFG[21] = 0x0U;
    PORT_REGS->GROUP[0].PORT_PINCFG[25] = 0x2U;
    PORT_REGS->GROUP[0].PORT_PINCFG[27] = 0x2U;
    PORT_REGS->GROUP[0].PORT_PINCFG[28] = 0x2U;
@@ -174,83 +169,54 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
    PORT_REGS->GROUP[0].PORT_PMUX[2] = 0x10U;
    PORT_REGS->GROUP[0].PORT_PMUX[3] = 0x10U;
    PORT_REGS->GROUP[0].PORT_PMUX[4] = 0x22U;
-   PORT_REGS->GROUP[0].PORT_PMUX[5] = 0x0U;
    PORT_REGS->GROUP[0].PORT_PMUX[6] = 0x22U;
-   PORT_REGS->GROUP[0].PORT_PMUX[8] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PMUX[9] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PMUX[10] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PMUX[12] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PMUX[13] = 0x0U;
-   PORT_REGS->GROUP[0].PORT_PMUX[14] = 0x0U;
 
    /************************** GROUP 1 Initialization *************************/
-   PORT_REGS->GROUP[1].PORT_DIR = 0x3500450U;
-   PORT_REGS->GROUP[1].PORT_OUT = 0x00U;
+   PORT_REGS->GROUP[1].PORT_DIR = 0x035CCF54U;
+   PORT_REGS->GROUP[1].PORT_OUT = 0x00AB3089U;
    PORT_REGS->GROUP[1].PORT_PINCFG[0] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[1] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[2] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[3] = 0x1U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[4] = 0x0U;
    PORT_REGS->GROUP[1].PORT_PINCFG[5] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[6] = 0x0U;
    PORT_REGS->GROUP[1].PORT_PINCFG[7] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[9] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[10] = 0x0U;
    PORT_REGS->GROUP[1].PORT_PINCFG[12] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[13] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[16] = 0x1U;
    PORT_REGS->GROUP[1].PORT_PINCFG[17] = 0x1U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[20] = 0x0U;
    PORT_REGS->GROUP[1].PORT_PINCFG[21] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[22] = 0x0U;
    PORT_REGS->GROUP[1].PORT_PINCFG[23] = 0x2U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[24] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PINCFG[25] = 0x0U;
+   PORT_REGS->GROUP[1].PORT_PINCFG[30] = 0x1U;
+   PORT_REGS->GROUP[1].PORT_PINCFG[31] = 0x1U;
 
-   PORT_REGS->GROUP[1].PORT_PMUX[0] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[1] = 0x11U;
-   PORT_REGS->GROUP[1].PORT_PMUX[2] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[3] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[4] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[5] = 0x0U;
+   PORT_REGS->GROUP[1].PORT_PMUX[1] = 0x10U;
    PORT_REGS->GROUP[1].PORT_PMUX[6] = 0x22U;
    PORT_REGS->GROUP[1].PORT_PMUX[8] = 0x22U;
-   PORT_REGS->GROUP[1].PORT_PMUX[10] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[11] = 0x0U;
-   PORT_REGS->GROUP[1].PORT_PMUX[12] = 0x0U;
+   PORT_REGS->GROUP[1].PORT_PMUX[15] = 0x22U;
 
    /************************** GROUP 2 Initialization *************************/
-   PORT_REGS->GROUP[2].PORT_DIR = 0x12090041U;
-   PORT_REGS->GROUP[2].PORT_OUT = 0x20U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[0] = 0x0U;
+   PORT_REGS->GROUP[2].PORT_DIR = 0x122B2267U;
+   PORT_REGS->GROUP[2].PORT_OUT = 0x0C00F089U;
    PORT_REGS->GROUP[2].PORT_PINCFG[3] = 0x1U;
    PORT_REGS->GROUP[2].PORT_PINCFG[5] = 0x2U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[6] = 0x0U;
    PORT_REGS->GROUP[2].PORT_PINCFG[7] = 0x2U;
+   PORT_REGS->GROUP[2].PORT_PINCFG[8] = 0x1U;
+   PORT_REGS->GROUP[2].PORT_PINCFG[10] = 0x1U;
+   PORT_REGS->GROUP[2].PORT_PINCFG[11] = 0x1U;
    PORT_REGS->GROUP[2].PORT_PINCFG[12] = 0x1U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[13] = 0x1U;
    PORT_REGS->GROUP[2].PORT_PINCFG[14] = 0x1U;
    PORT_REGS->GROUP[2].PORT_PINCFG[15] = 0x1U;
    PORT_REGS->GROUP[2].PORT_PINCFG[18] = 0x2U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[19] = 0x0U;
    PORT_REGS->GROUP[2].PORT_PINCFG[20] = 0x2U;
    PORT_REGS->GROUP[2].PORT_PINCFG[24] = 0x2U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[25] = 0x0U;
    PORT_REGS->GROUP[2].PORT_PINCFG[26] = 0x2U;
    PORT_REGS->GROUP[2].PORT_PINCFG[27] = 0x2U;
-   PORT_REGS->GROUP[2].PORT_PINCFG[28] = 0x0U;
 
-   PORT_REGS->GROUP[2].PORT_PMUX[0] = 0x0U;
    PORT_REGS->GROUP[2].PORT_PMUX[1] = 0x10U;
-   PORT_REGS->GROUP[2].PORT_PMUX[2] = 0x0U;
-   PORT_REGS->GROUP[2].PORT_PMUX[3] = 0x0U;
+   PORT_REGS->GROUP[2].PORT_PMUX[4] = 0x22U;
+   PORT_REGS->GROUP[2].PORT_PMUX[5] = 0x22U;
    PORT_REGS->GROUP[2].PORT_PMUX[6] = 0x22U;
    PORT_REGS->GROUP[2].PORT_PMUX[7] = 0x22U;
-   PORT_REGS->GROUP[2].PORT_PMUX[9] = 0x0U;
-   PORT_REGS->GROUP[2].PORT_PMUX[10] = 0x0U;
-   PORT_REGS->GROUP[2].PORT_PMUX[12] = 0x0U;
-   PORT_REGS->GROUP[2].PORT_PMUX[13] = 0x0U;
-   PORT_REGS->GROUP[2].PORT_PMUX[14] = 0x0U;
                 
 	(void)(u8Para);
 	return  (u8Para);

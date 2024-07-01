@@ -60,4 +60,5 @@ extern void Uart1App_String_Value_Show(const char *u8String, uint32_t u32Value, 
 extern void Uart1App_Boot_Keys_Show(uint32_t u32Value1, uint32_t u32Value2, uint32_t u32Value3);
 extern void Uart1App_Crc_Show(uint32_t u32Value1, uint32_t u32Value2);
 extern void Uart1App_MCU_Ver_Show(const char *u8String1, const char *u8String2);
+void Uart1App_Val_To_ASCII(uint32_t u32Value, uint8_t u8Mode);
 #endif

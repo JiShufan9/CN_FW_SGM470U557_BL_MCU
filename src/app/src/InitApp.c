@@ -32,7 +32,7 @@ uint8_t InitApp_Startup(void)
 	(void)ClockApp_Init(NOTHING);	
 
 	#if DEBUG_UART
-		(void)Uart1App_Init(NOTHING);		/* SERCOM1 DEBUG UART */		
+		(void)Uart1App_Init(NOTHING);		/* SERCOM1 DEBUG UART */  
 	#endif
 
 	return true;

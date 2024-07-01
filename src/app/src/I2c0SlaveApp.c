@@ -671,7 +671,7 @@ bool I2c0SlaveApp_Crc32_Check(uint32_t u32Size)
     }
     
     #if DEBUG_UART
-        Uart1App_Crc_Show(u32ComputeCrc32, u32AppCrc32);
+        Uart1App_Crc_Show(u32ComputeCrc32, u32CRC);
     #endif
 
     (void)(u32Size);

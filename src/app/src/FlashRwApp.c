@@ -255,18 +255,7 @@ uint16_t FlashRwApp_FIDM_Ver_Get(void)
 {
 	uint16_t u16FidmVer = 0U;
 	(void)FlashRwApp_FIDM_Ver_Check(NOTHING);
-	switch(PinIOApp_HwStatusFlag_Get())
-	{
-		case NONLOCAL_DIMMING:
-			u16FidmVer = ((uint16_t)(gu8FidmVerTable[NONLOCAL_FIDM_VER_H]) << (uint16_t)(SHIFT_BIT_8))  | (uint16_t)(gu8FidmVerTable[NONLOCAL_FIDM_VER_L]);		
-		break;
-		case LOCAL_DIMMING:
-			u16FidmVer = ((uint16_t)(gu8FidmVerTable[LOCAL_FIDM_VER_H]) << (uint16_t)(SHIFT_BIT_8))  | (uint16_t)(gu8FidmVerTable[LOCAL_FIDM_VER_L]);							
-		break;
-		default:
-			/* NOTHING */
-		break;
-	}
+	u16FidmVer = ((uint16_t)(gu8FidmVerTable[NONLOCAL_FIDM_VER_H]) << (uint16_t)(SHIFT_BIT_8))  | (uint16_t)(gu8FidmVerTable[NONLOCAL_FIDM_VER_L]);		
 
 	return u16FidmVer;
 }

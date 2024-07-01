@@ -81,7 +81,7 @@ static void Uart1App_Send(void *Buffer, const size_t Len)
 ;	Source ID				:	GM_BL_UART-003
 ******************************************************************************/
 #if DEBUG_UART
-static void Uart1App_Val_To_ASCII(uint32_t u32Value, uint8_t u8Mode)
+void Uart1App_Val_To_ASCII(uint32_t u32Value, uint8_t u8Mode)
 {
 	uint32_t u32Index;
 
