@@ -140,7 +140,7 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
 {
    /************************** GROUP 0 Initialization *************************/
    PORT_REGS->GROUP[0].PORT_DIR = 0x01FE8416U;
-   PORT_REGS->GROUP[0].PORT_OUT = 0x02013BA0U;
+   PORT_REGS->GROUP[0].PORT_OUT = 0x020100A0U;
    PORT_REGS->GROUP[0].PORT_PINCFG[0] = 0x2U;
    PORT_REGS->GROUP[0].PORT_PINCFG[3] = 0x1U;
    PORT_REGS->GROUP[0].PORT_PINCFG[5] = 0x1U;
@@ -166,7 +166,7 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
 
    /************************** GROUP 1 Initialization *************************/
    PORT_REGS->GROUP[1].PORT_DIR = 0x037CCF54U;
-   PORT_REGS->GROUP[1].PORT_OUT = 0x008B3089U;
+   PORT_REGS->GROUP[1].PORT_OUT = 0x00880009U;
    PORT_REGS->GROUP[1].PORT_PINCFG[0] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[1] = 0x2U;
    PORT_REGS->GROUP[1].PORT_PINCFG[3] = 0x1U;
@@ -187,7 +187,7 @@ uint8_t PinIOApp_Init(uint8_t u8Para)
    PORT_REGS->GROUP[1].PORT_PMUX[15] = 0x22U;
 
    /************************** GROUP 2 Initialization *************************/
-   PORT_REGS->GROUP[2].PORT_DIR = 0x133F0FE7U;
+   PORT_REGS->GROUP[2].PORT_DIR = 0x133F2FE7U;
    PORT_REGS->GROUP[2].PORT_OUT = 0x0C00F008U;
    PORT_REGS->GROUP[2].PORT_PINCFG[1] = 0x2U; 
    PORT_REGS->GROUP[2].PORT_PINCFG[2] = 0x2U;
