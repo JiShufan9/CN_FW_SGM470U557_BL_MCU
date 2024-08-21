@@ -142,8 +142,8 @@ enum SizeAssign{
 };
 
 enum DeviceId{
-    ID_TP = 0x24U,
-    ID_DISPLAY = 0x09U
+    ID_TP = 0x99U,
+    ID_DISPLAY = 0xC7U
 };
 
 enum DefaultValures{

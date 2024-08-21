@@ -11,8 +11,6 @@
 /*---------------------------- Debug Support ---------------------------------*/
 #define	DEBUG_BAT_ADC		false
 #define	DEBUG_BAT_VOL		false
-#define DEBUG_HWVER_ADC     false
-#define DEBUG_HWVER_GET     true
 /*---------------------------- Define Constant -------------------------------*/
 #define ADC0_CH1_BATT       ADC_INPUTCTRL_MUXPOS_AIN1
 #define ADC1_CH2_BATT       ADC_INPUTCTRL_MUXPOS_AIN2

@@ -46,9 +46,6 @@ static const uint16_t gu16BatteryVoltAdcTable[SIZE_BATT_VOLT] = {
 22480U, 19856U, 17632U, 15232U, 12832U, 10400U,1248U                            /* 10V ~ 04V */
 };
 
-static const uint16_t gu16HWVersionAdcTable[SIZE_HW_VER] = {
-60947U, 53738U, 45874U, 39321U, 34733U, 28180U, 24903U, 19660U, 17039U, 11796U	/* HW version 01 ~ 10 */
-};
 /*---------------------------- Start Program --------------------------------*/
 /******************************************************************************
 ;       Function Name			:	uint8_t AdcApp_Init(uint8_t u8Para)
@@ -491,37 +488,10 @@ bool AdcApp_AdcDebounceFlag_Set(bool bSwitch)
 ******************************************************************************/
 uint8_t AdcApp_HW_Version_Transfer(void)
 {
-	uint8_t u8Cnt;
-
-    (void)AdcApp_Start();
-    if(AdcApp_Converstion_Ready() == DRIVER_TRUE)
-    {
-        (void)FunApp_Delay_Millisecond(1U, MODE_ISR);   /* Delay 1ms to get ADC normal.*/
-        
-        /* Index HW Version ADC Vaule */
-        for(u8Cnt=0U; u8Cnt < (uint8_t)(SIZE_HW_VER); u8Cnt++)
-        {
-            if(AdcApp_Conversion_Get() >= gu16HWVersionAdcTable[u8Cnt])
-            {
-                gu8AdcToHWVersion = (uint8_t)((uint8_t)(BASE_HW_VER) + u8Cnt);	/* ADC to HW version */
-                break;
-            }
-        }
-        if(gu8AdcToHWVersion < (uint8_t)(HW_VER_MAX))
-        {
-            gu16AdcToHWVersion = ((uint16_t)(BASE_HW_VER_H) << (uint16_t)(SHIFT_BIT_8))  | (uint16_t)(gu8AdcToHWVersion);
-        }
-        else
-        {
-            gu16AdcToHWVersion = ((uint16_t)(HW_VER_MAX_H) << (uint16_t)(SHIFT_BIT_4))  | (uint16_t)(HW_VER_MAX_L);
-        }
-        #if (DEBUG_HWVER_ADC && DEBUG_UART)
-            Uart1App_String_Value_Show("HW version ADC = ", AdcApp_Conversion_Get(NOTHING), ((uint8_t))(SHOW_DEC));
-        #endif
-        #if (DEBUG_HWVER_GET && DEBUG_UART)
-            Uart1App_String_Value_Show("HW version = V", gu8AdcToHWVersion, (uint8_t)(SHOW_DEC));
-        #endif	
-    }
+	gu16AdcToHWVersion = PortDrvier_PinRead(IO_PCBA_A0) + (PortDrvier_PinRead(IO_PCBA_A1) << 8) + (PortDrvier_PinRead(IO_PCBA_A2) << 16) + (PortDrvier_PinRead(IO_PCBA_A3) << 24);
+	#if (DEBUG_UART)
+		Uart1App_String_Value_Show("HW version = V", gu8AdcToHWVersion, (uint8_t)(SHOW_DEC));
+	#endif	
     
 	return true;
 }

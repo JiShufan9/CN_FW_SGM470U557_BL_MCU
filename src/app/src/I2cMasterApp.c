@@ -10,6 +10,7 @@
 #include"app/inc/I2cMasterApp.h"
 /*---------------------------- Declare Global Variable ----------------------*/
 static st_i2c_master_config gAPPI2cTcon;
+static st_i2c_master_config gAPPI2cLEDRriver;
 /*---------------------------- Start Program --------------------------------*/
 /******************************************************************************
 ;Author: Orlando Huang
@@ -35,6 +36,19 @@ bool I2cMasterApp_Master_Initial(uint8_t u8Master)
 
             bReturn = master_i2c_init(&gAPPI2cTcon);
             (void)master_i2c_interrupt(&gAPPI2cTcon);
+        break;
+        case I2C_MASTER_SERCOM_5:
+            gAPPI2cLEDRriver.addr = LED_DRIVER_ADDRESS;
+            gAPPI2cLEDRriver.channel = SERCOM_CH5;
+            gAPPI2cLEDRriver.speed = STANDARD_MODE;
+            gAPPI2cLEDRriver.baudrate = 400U;
+            gAPPI2cLEDRriver.callback = NULL;
+            gAPPI2cLEDRriver.inte.error_int = (uint8_t)false;
+            gAPPI2cLEDRriver.inte.master_on_bus = (uint8_t)true;
+            gAPPI2cLEDRriver.inte.slave_on_bus = (uint8_t)true;
+
+            bReturn = master_i2c_init(&gAPPI2cLEDRriver);
+            (void)master_i2c_interrupt(&gAPPI2cLEDRriver);
         break;
 
         default:
@@ -100,6 +114,19 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
             }
         break;
+        case I2C_MASTER_SERCOM_5:
+            if (true == master_i2c_transmitte(&gAPPI2cLEDRriver, u8Data, u32Len))
+            {
+                while((true == SERCOM_I2CM_IsBusy(gAPPI2cLEDRriver.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
+                {
+                    u32Jump += 1UL;
+                }
+            }
+            else
+            {
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5);
+            }
+        break;
 
         default:
             /* NOTHING */
@@ -139,7 +166,19 @@ bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
             }
         break;
-
+        case I2C_MASTER_SERCOM_5:
+            if(true == master_i2c_writeread(&gAPPI2cLEDRriver, u8TxData, u32TxLen, u8RxData, u32RxLen))
+            {
+                while((true == SERCOM_I2CM_IsBusy(gAPPI2cLEDRriver.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
+                {
+                    u32Jump += 1UL;
+                }
+            }
+            else
+            {
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5);
+            }
+        break;
         default:
             /* NOTHING */
         break;

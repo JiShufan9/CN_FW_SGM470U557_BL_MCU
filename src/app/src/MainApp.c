@@ -15,6 +15,7 @@
 #include "app/inc/I2c0SlaveApp.h"
 #include "app/inc/FlashRwApp.h"
 #include "app/inc/WatchDogApp.h"
+#include "app/inc/LEDDriverApp.h"
 /*---------------------------- Declare Global Variable ----------------------*/
 //static uint32_t gu32BLActiveCnt = TIME_BL_ACTIVE;
 #if ADC_BATT
@@ -76,21 +77,8 @@ bool MainApp_BLControl(void)
 	bool bReturn = false;
 
 	u16BLValue = I2cSlaveApp_GetHostBL();
-	mainApp_SetBacklightDimmingType();
 
-	*(tsTconProtocal.u8TconTxBuf) = TCONDutyCmdAddr;
-	*(tsTconProtocal.u8TconTxBuf + 1U) = (uint8_t)(u16BLValue & 0xFCU);
-	*(tsTconProtocal.u8TconTxBuf + 2U) = (uint8_t)((u16BLValue>>8U) & 0xFFU);
-	/* Calculate Data Sum */
-	*(tsTconProtocal.u8TconTxBuf + 3U) = 0;
-	while(u8Idx < 3U)
-	{
-		*(tsTconProtocal.u8TconTxBuf + 3U) += *(tsTconProtocal.u8TconTxBuf + u8Idx);
-		u8Idx++;
-	}
-	tsTconProtocal.u8TxLen = 4U;
-	/* Send I2C CMD to TCON */
-	bReturn = I2cMasterApp_Tx(I2C_MASTER_SERCOM_3, &tsTconProtocal.u8TconTxBuf[0U], tsTconProtocal.u8TxLen);
+	LEDDriverApp_BackLight_Output(u16BLValue);
 
 	(void)u32Value;
 	(void)u16BLValue;

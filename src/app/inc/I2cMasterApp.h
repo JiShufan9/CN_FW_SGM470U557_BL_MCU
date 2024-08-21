@@ -19,6 +19,7 @@ extern "C" {
 #define I2CMASTERAPP_ENABLE_TX  true
 #define I2CMASTERAPP_ENABLE_RX  false
 #define ADDR_TCON 0x52U
+#define LED_DRIVER_ADDRESS              0x38U
 
 typedef enum I2CMasterSercomType
 {

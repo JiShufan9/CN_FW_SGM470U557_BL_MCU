@@ -78,6 +78,8 @@ void SERCOM_I2CM_TCON_Handler(void);
 bool SERCOM_I2CM_IsBusy(uint8_t u8Ch);
 void SERCOM_I2CM_CallbackRegister(SERCOM_I2C_CALLBACK I2CMCallback, uintptr_t contextHandle, uint8_t u8Ch);
 bool SERCOM_I2C_TransferSetup(uint32_t* pu32Setup, uint32_t u32SrcClkFreq, uint8_t u8Ch );
+void SERCOM_I2CM_Handler(uint8_t u8Ch);
+
 #ifdef __cplusplus 
 }
 #endif

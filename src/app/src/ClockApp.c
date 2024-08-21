@@ -39,9 +39,9 @@ uint8_t ClockApp_Init(uint8_t u8Para)
 
     (void)ClockDriver_GCLKToPeri(GCLK_ADC0,GCLKGEN0);                   /* Battery Voltage Detection and HW version*/
  
-    (void)ClockDriver_GCLKToPeri(GCLK_SERCOM3_CORE,GCLKGEN0);       /* TCON , I2C , Master */
+    (void)ClockDriver_GCLKToPeri(GCLK_SERCOM5_CORE,GCLKGEN0);       /* Led Driver , I2C , Master */
     (void)ClockDriver_EnableAHBClock(&CurrentSystemClockSet);
-    MCLK_REGS->MCLK_APBCMASK = ((MCLK_APBCMASK_SERCOM0_Msk) | (MCLK_APBCMASK_SERCOM1_Msk) | (MCLK_APBCMASK_ADC0_Msk) | (MCLK_APBCMASK_TCC0_Msk) | (MCLK_APBCMASK_SERCOM3_Msk));
+    MCLK_REGS->MCLK_APBCMASK = ((MCLK_APBCMASK_SERCOM0_Msk) | (MCLK_APBCMASK_SERCOM1_Msk) | (MCLK_APBCMASK_ADC0_Msk) | (MCLK_APBCMASK_TCC0_Msk) | (MCLK_APBCMASK_SERCOM5_Msk));
 
     (void)(u8Para);
 	return u8Para;

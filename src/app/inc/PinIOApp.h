@@ -12,11 +12,6 @@
 #include "hal/inc/PortDriver.h"
 /*---------------------------- Delcare Content  ----------------------------*/
 #define	PARA_ODD_EVEN_NUM	2U
-/* Hw VerPins */
-#define		SET_PCBA_A3		0x1000U
-#define		SET_PCBA_A2		0x0100U	
-#define		SET_PCBA_A1		0x0010U
-#define		SET_PCBA_A0		0x0001U
 
 /*---------------------------- IPC I/O Pin Definition ---------------------------*/	
 
@@ -99,8 +94,8 @@
 #define	portMCU_1V35_EN		PORT_C
 #define	pinMCU_1V35_EN		BIT19
 
-#define	portMCU_1V8_EN		PORT_C
-#define	pinMCU_1V8_EN		BIT16
+#define	portMCU_1V8_EN      PORT_C
+#define	pinMCU_1V8_EN       BIT16
 
 #define	portMCU_WD_RESET	PORT_C
 #define	pinMCU_WD_RESET		BIT24
@@ -108,8 +103,8 @@
 #define	portLCD_BIAS		PORT_C
 #define	pinLCD_BIAS			BIT25
 
-#define	portMCU_1V1_EN		PORT_C
-#define	pinMCU_1V1_EN		BIT28
+#define	portMCU_1V1_EN      PORT_C
+#define	pinMCU_1V1_EN       BIT28
 
 #define	portVCUWakeC			PORT_A      /* pin 38 */
 #define	pinVCUWakeC             BIT6
