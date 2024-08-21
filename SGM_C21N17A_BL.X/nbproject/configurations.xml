@@ -127,6 +127,8 @@
           <itemPath>../src/app/inc/AdcApp.h</itemPath>
           <itemPath>../src/app/inc/I2cMasterApp.h</itemPath>
           <itemPath>../src/app/inc/WakeCtrlApp.h</itemPath>
+          <itemPath>../src/app/inc/EepromApp.h</itemPath>
+          <itemPath>../src/app/inc/LEDDriverApp.h</itemPath>
         </logicalFolder>
         <logicalFolder name="src" displayName="src" projectFiles="true">
           <itemPath>../src/app/src/ClockApp.c</itemPath>
@@ -143,6 +145,8 @@
           <itemPath>../src/app/src/AdcApp.c</itemPath>
           <itemPath>../src/app/src/I2cMasterApp.c</itemPath>
           <itemPath>../src/app/src/WakeCtrlApp.c</itemPath>
+          <itemPath>../src/app/src/EepromApp.c</itemPath>
+          <itemPath>../src/app/src/LEDDriverApp.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f1" displayName="config" projectFiles="true">

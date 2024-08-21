@@ -37,6 +37,130 @@ uint8_t NvmCtrl_Initialize(NvmCtrl_Config_ts *tsInitConfig)
 }
 
 /******************************************************************************
+;	Function Name			:	uint8_t NvmCtrl_RWWEEPROM_Read(Eeprom_Read_ts *tsEepromRead)
+;	Function Description	:	Read N byte data in the internal EEPROM, read unit are 4 bytes.
+;	Parameters				:	[tsEepromRead] - Reference Eeprom_Read_ts data structure definition.
+;												(1) u32Addr : Set start address.
+;												(2) u32Length : Read data length.
+;												(3) u32Data : The buffer of receive data. 
+;												(4) u8Status : Check process is busy or finish.
+;	Return Values			:	Return read status.
+;	Source ID				:
+******************************************************************************/
+uint8_t NvmCtrl_RWWEEPROM_Read(Eeprom_Read_ts *tsEepromRead)
+{
+	uint32_t *paddress = (*tsEepromRead).u32Addr;
+	nvmctrl_registers_t *tsNvmctrlRegs;
+
+	tsNvmctrlRegs = NVMCTRL_REGS;
+	(*tsEepromRead).u8Status = (uint8_t)(NVC_BUSY);	
+	while(((*tsEepromRead).u8Status) == (uint8_t)(NVC_BUSY))
+	{
+		if(((uint8_t)((*tsNvmctrlRegs).NVMCTRL_INTFLAG) & (uint8_t)(NVMCTRL_INTFLAG_READY_Msk)) == (uint8_t)(NVMCTRL_INTFLAG_READY_Msk))
+		{	
+			/* EEPROM is ready */
+			for(gu32Index=0U; gu32Index<(*tsEepromRead).u32Length; gu32Index++)		/* Writing 32-bit words in the given address */
+			{
+				(*tsEepromRead).u32Data[gu32Index] = (uint32_t)(*paddress);
+				(void)(*paddress);
+				paddress++;
+			}
+			(*tsEepromRead).u8Status = (uint8_t)(NVC_FINISH);	
+		}
+		else
+		{
+			/* EEPROM is busy */
+			(*tsEepromRead).u8Status = (uint8_t)(NVC_BUSY);
+		}
+	}
+
+	(*tsNvmctrlRegs).NVMCTRL_ADDR = (uint32_t)((*tsEepromRead).u32Addr) >> 1U;	/* Set address and command */	
+
+	(void)(tsEepromRead);
+	return (*tsEepromRead).u8Status;	
+}
+
+/******************************************************************************
+;	Function Name			:	uint8_t NvmCtrl_RWWEEPROM_PageWrite(Eeprom_Page_Write_ts *tsEepromWrite)
+;	Function Description	:	Writes the contents of the page buffer to the page addressed in the internal EEPROM.
+;	Parameters				:	[tsEepromWrite] - Reference Eeprom_Read_ts data structure definition.
+;												(1) u32Addr : Set start address.
+;												(2) u32Data : The buffer of transmit data. 
+;												(3) u8Status : Check process is busy or finish.
+;	Return Values			:	Return write status.
+;	Source ID				:
+******************************************************************************/
+uint8_t NvmCtrl_RWWEEPROM_PageWrite(Eeprom_Page_Write_ts *tsEepromWrite)
+{
+    uint32_t *paddress = (*tsEepromWrite).u32Addr;
+	nvmctrl_registers_t *tsNvmctrlRegs;
+
+	tsNvmctrlRegs = NVMCTRL_REGS;
+	(*tsEepromWrite).u8Status = (uint8_t)(NVC_BUSY);
+	while(((*tsEepromWrite).u8Status) == (uint8_t)(NVC_BUSY))
+	{
+		if(((uint8_t)((*tsNvmctrlRegs).NVMCTRL_INTFLAG) & (uint8_t)(NVMCTRL_INTFLAG_READY_Msk)) == (uint8_t)(NVMCTRL_INTFLAG_READY_Msk))
+		{	
+			/* EEPROM is ready */
+			for(gu32Index=0U; gu32Index<(NVC_RWWEEPROM_PAGESIZE/NVC_READ_UNIT); gu32Index++)		/* Writing 32-bit words in the given address */
+			{
+				*paddress = (*tsEepromWrite).u32Data[gu32Index];
+				(void)(*paddress);
+				paddress++;
+			}
+			(*tsEepromWrite).u8Status = (uint8_t)(NVC_FINISH);	
+		}
+		else
+		{
+			/* EEPROM is busy */
+			(*tsEepromWrite).u8Status = (uint8_t)(NVC_BUSY);
+		}
+	}
+
+	(*tsNvmctrlRegs).NVMCTRL_ADDR = (uint32_t)((*tsEepromWrite).u32Addr) >> 1U;		/* Set address and command */
+	(*tsNvmctrlRegs).NVMCTRL_CTRLA = (uint16_t)(NVMCTRL_CTRLA_CMD_RWWEEWP) | (uint16_t)(NVMCTRL_CTRLA_CMDEX_KEY);	
+
+	(void)(tsEepromWrite);
+	return (*tsEepromWrite).u8Status;
+}
+
+/******************************************************************************
+;	Function Name			:	uint8_t NvmCtrl_RWWEEPROM_RowErase(Eeprom_Row_Erase_ts *tsEepromErase)
+;	Function Description	:	Erased the row addressed in the internal EEPROM, the row size are 256 Bytes.
+;	Parameters				:	[tsEepromErase] - Reference Eeprom_Row_Erase_ts data structure definition.
+;												(1) u32Addr : Set start address. 
+;												(2) u8Status : Check process if busy or finish.
+;	Return Values			:	Return erase status.
+;	Source ID				:
+******************************************************************************/
+uint8_t NvmCtrl_RWWEEPROM_RowErase(Eeprom_Row_Erase_ts *tsEepromErase)
+{    
+	nvmctrl_registers_t *tsNvmctrlRegs;
+
+	tsNvmctrlRegs = NVMCTRL_REGS;
+	(*tsEepromErase).u8Status = (uint8_t)(NVC_BUSY);
+	while(((*tsEepromErase).u8Status) == (uint8_t)(NVC_BUSY))
+	{
+		if(((uint8_t)((*tsNvmctrlRegs).NVMCTRL_INTFLAG) & (uint8_t)(NVMCTRL_INTFLAG_READY_Msk)) == (uint8_t)(NVMCTRL_INTFLAG_READY_Msk))
+		{	
+			/* EEPROM is ready */
+			(*tsEepromErase).u8Status = (uint8_t)(NVC_FINISH);		
+		}
+		else
+		{
+			/* EEPROM is busy */
+			(*tsEepromErase).u8Status = (uint8_t)(NVC_BUSY);			
+		}
+	}
+
+	(*tsNvmctrlRegs).NVMCTRL_ADDR = (uint32_t)((*tsEepromErase).u32Addr) >> 1U; 	 /* Set address and command */
+	(*tsNvmctrlRegs).NVMCTRL_CTRLA = (uint16_t)(NVMCTRL_CTRLA_CMD_RWWEEER) | (uint16_t)(NVMCTRL_CTRLA_CMDEX_KEY);
+
+	(void)(tsEepromErase);
+    return (*tsEepromErase).u8Status;
+}
+
+/******************************************************************************
 ;	Function Name			:	uint8_t NvmCtrl_IsBusy_Get(void)
 ;	Function Description	:	Check EEPROM busy status.
 ;	Parameters				:	None.

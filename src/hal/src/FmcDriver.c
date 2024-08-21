@@ -26,6 +26,51 @@ uint8_t FmcDriver_Init(NvmCtrl_Config_ts *tsInitConfig)
 }
 
 /******************************************************************************
+;	Function Name			:	uint8_t FmcDriver_Eeprom_Read(Eeprom_Read_ts *tsEepromRead)
+;	Function Description	:	Read N byte data in the internal EEPROM.
+;	Parameters				:	[tsEepromRead] - Reference Eeprom_Read_ts data structure definition.
+;												(1) u32Addr : Set start address.
+;												(2) u32Length : Read data length.
+;												(3) u32Data : The buffer of receive data. 
+;												(4) u8Status : Check process is busy or finish.
+;	Return Values			:	Return read status.
+;	Source ID				:
+******************************************************************************/
+uint8_t FmcDriver_Eeprom_Read(Eeprom_Read_ts *tsEepromRead)
+{
+	return NvmCtrl_RWWEEPROM_Read(tsEepromRead);
+}
+
+/******************************************************************************
+;	Function Name			:	uint8_t FmcDriver_Eeprom_Page_Write(Eeprom_Page_Write_ts *tsEepromWrite)
+;	Function Description	:	Writes the contents of the page buffer to the page addressed, the page is 64 bytes.
+;	Parameters				:	[tsEepromWrite] - Reference Eeprom_Read_ts data structure definition.
+;												(1) u32Addr : Set start address.
+;												(2) u32Data : The buffer of transmit data. 
+;												(3) u8Status : Check process is busy or finish.
+;	Return Values			:	Return write status.
+;	Source ID				:
+******************************************************************************/
+uint8_t FmcDriver_Eeprom_Page_Write(Eeprom_Page_Write_ts *tsEepromWrite)
+{
+	return NvmCtrl_RWWEEPROM_PageWrite(tsEepromWrite);
+}
+
+/******************************************************************************
+;	Function Name			:	uint8_t FmcDriver_Eeprom_Row_Erase(Eeprom_Row_Erase_ts *tsEepromErase)
+;	Function Description	:	Erased the row addressed in the internal EEPROM, the row size are 256 Bytes.
+;	Parameters				:	[tsEepromErase] - Reference Eeprom_Row_Erase_ts data structure definition.
+;												(1) u32Addr : Set start address. 
+;												(2) u8Status : Check process if busy or finish.
+;	Return Values			:	Return erase status.
+;	Source ID				:
+******************************************************************************/
+uint8_t FmcDriver_Eeprom_Row_Erase(Eeprom_Row_Erase_ts *tsEepromErase)
+{
+	return NvmCtrl_RWWEEPROM_RowErase(tsEepromErase);
+}
+
+/******************************************************************************
 ;	Function Name			:	uint8_t FmcDriver_Busy_Status_Get(void)
 ;	Function Description	:	Check EEPROM busy status.
 ;	Parameters				:	None.

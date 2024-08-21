@@ -613,3 +613,221 @@ void SERCOM_I2CM_TCON_Handler(void)
         {/* Nothing */}
     }
 }
+
+static void SERCOM_I2CM_StatusCheck(sercom_registers_t *ptReg, uint8_t u8Ch)
+{
+    uint32_t u32TimeoutTemp;
+    uint32_t u32ConfigTemp;
+    uint16_t u16Address = gtObj[u8Ch].address;
+    switch(gtObj[u8Ch].state)
+    {
+        case SERCOM_I2C_REINITIATE_TRANSFER:
+        {
+            if (gtObj[u8Ch].writeSize != 0U)
+            {
+                /* Initiate Write transfer */
+                SERCOM_I2C_InitiateTransfer(u16Address, false, u8Ch);
+            }
+            else
+            {
+                /* Initiate Read transfer */
+                SERCOM_I2C_InitiateTransfer(u16Address, true, u8Ch);
+            }
+            break;
+        }
+
+        case SERCOM_I2C_STATE_ADDR_SEND:
+        {
+            /*
+             * Write ADDR[7:0] register to "11110 address[9:8] 1"
+             * ADDR.TENBITEN must be cleared
+             */
+            u32ConfigTemp = (((uint32_t)gtObj[u8Ch].address) >> RIGHT_ALIGNED);
+            u32ConfigTemp |=TEN_BIT_ADDR_MASK;
+            u32ConfigTemp = u32ConfigTemp << 1U;
+            u32ConfigTemp |= I2C_TRANSFER_READ;
+            ptReg->I2CM.SERCOM_ADDR = u32ConfigTemp;
+
+            u32TimeoutTemp = 12000U;
+            /* Wait for synchronization */
+            while((ptReg->I2CM.SERCOM_SYNCBUSY != 0x0U) && (u32TimeoutTemp > 0U))
+            {
+                u32TimeoutTemp = u32TimeoutTemp - 1U;
+            }
+
+            gtObj[u8Ch].state = SERCOM_I2C_STATE_TRANSFER_READ;
+            break;
+        }
+        
+        case SERCOM_I2C_STATE_TRANSFER_WRITE:
+        {
+            if (gtObj[u8Ch].writeCount == (gtObj[u8Ch].writeSize))
+            {
+                if(gtObj[u8Ch].readSize != 0U)
+                {
+                    SERCOM_I2C_InitiateRead(u16Address,u8Ch);
+                }
+                else
+                {
+                    u32ConfigTemp = ptReg->I2CM.SERCOM_CTRLB;
+                    u32ConfigTemp &= ~SERCOM_I2CM_CTRLB_CMD_Msk; 
+                    u32ConfigTemp |= SERCOM_I2CM_CTRLB_CMD(3U);
+                    ptReg->I2CM.SERCOM_CTRLB = u32ConfigTemp;
+
+                    u32TimeoutTemp = 12000U;
+                    /* Wait for synchronization */
+                    while((ptReg->I2CM.SERCOM_SYNCBUSY != 0x0U) && (u32TimeoutTemp > 0U))
+                    {
+                        u32TimeoutTemp = u32TimeoutTemp - 1U;
+                    }
+                    gtObj[u8Ch].state = SERCOM_I2C_STATE_TRANSFER_DONE;
+                }
+            }
+            /* Write next byte */
+            else
+            {
+                ptReg->I2CM.SERCOM_DATA = gtObj[u8Ch].writeBuffer[gtObj[u8Ch].writeCount];
+                gtObj[u8Ch].writeCount += 1U;
+            }
+            break;
+        }
+        
+        case SERCOM_I2C_STATE_TRANSFER_READ:
+        {
+            if(gtObj[u8Ch].readCount == (gtObj[u8Ch].readSize - 1U))
+            {
+                /* Set NACK and send stop condition to the slave from master */
+                u32ConfigTemp = ptReg->I2CM.SERCOM_CTRLB;
+                u32ConfigTemp &= ~(SERCOM_I2CM_CTRLB_ACKACT_Msk | SERCOM_I2CM_CTRLB_CMD_Msk);
+                u32ConfigTemp |= SERCOM_I2CM_CTRLB_ACKACT_Msk | SERCOM_I2CM_CTRLB_CMD(3U);
+                ptReg->I2CM.SERCOM_CTRLB = u32ConfigTemp;
+
+                u32TimeoutTemp = 12000U;
+                /* Wait for synchronization */
+                while((ptReg->I2CM.SERCOM_SYNCBUSY != 0x0U) && (u32TimeoutTemp > 0U))
+                {
+                    u32TimeoutTemp = u32TimeoutTemp - 1U;
+                }
+                gtObj[u8Ch].state = SERCOM_I2C_STATE_TRANSFER_DONE;
+            }
+            else
+            {
+                /* Set ACK receive data from the slave */
+                u32ConfigTemp = ptReg->I2CM.SERCOM_CTRLB;
+                u32ConfigTemp &= ~(SERCOM_I2CM_CTRLB_ACKACT_Msk | SERCOM_I2CM_CTRLB_CMD_Msk);
+                u32ConfigTemp |= SERCOM_I2CM_CTRLB_ACKACT(0U) | SERCOM_I2CM_CTRLB_CMD(2U);
+                ptReg->I2CM.SERCOM_CTRLB = u32ConfigTemp;
+            }
+
+            /* Read the received data */
+            gtObj[u8Ch].readBuffer[gtObj[u8Ch].readCount] = ptReg->I2CM.SERCOM_DATA;
+            gtObj[u8Ch].readCount += 1U;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    } 
+    
+    (void)ptReg->I2CM.SERCOM_DATA;
+    (void)ptReg->I2CM.SERCOM_ADDR;
+    (void)ptReg->I2CM.SERCOM_CTRLB;
+}
+
+
+
+
+// LDRA_EXCLUDE_START 76 D
+void SERCOM_I2CM_Handler(uint8_t u8Ch)
+{
+    sercom_registers_t *ptReg = i2c_channel_reg(u8Ch);
+    uint32_t u32TimeoutTemp;
+    
+    if(ptReg != NULL)
+    {
+    if(ptReg->I2CM.SERCOM_INTENSET != 0U)
+    {
+        /* Checks if the arbitration lost in multi-master scenario */
+        if((ptReg->I2CM.SERCOM_STATUS & SERCOM_I2CM_STATUS_ARBLOST_Msk) == SERCOM_I2CM_STATUS_ARBLOST_Msk)
+        {
+            /*
+             * Re-initiate the transfer if arbitration is lost
+             * in between of the transfer
+             */
+            gtObj[u8Ch].state = SERCOM_I2C_REINITIATE_TRANSFER;
+
+        }
+        else if((ptReg->I2CM.SERCOM_STATUS & SERCOM_I2CM_STATUS_BUSERR_Msk) == SERCOM_I2CM_STATUS_BUSERR_Msk)
+        {
+            /* Set Error status */
+            gtObj[u8Ch].state = SERCOM_I2C_STATE_ERROR;
+            gtObj[u8Ch].error = SERCOM_I2C_ERROR_BUS;
+        }
+        else if((ptReg->I2CM.SERCOM_STATUS & SERCOM_I2CM_STATUS_RXNACK_Msk) == SERCOM_I2CM_STATUS_RXNACK_Msk)
+        {
+            gtObj[u8Ch].state = SERCOM_I2C_STATE_ERROR;
+            gtObj[u8Ch].error = SERCOM_I2C_ERROR_NAK;
+        }
+        else
+        {
+            SERCOM_I2CM_StatusCheck(ptReg,u8Ch);
+        }
+                    
+        if(gtObj[u8Ch].state == SERCOM_I2C_STATE_ERROR)
+        {
+            /* Reset the PLib objects and Interrupts */
+            gtObj[u8Ch].state = SERCOM_I2C_STATE_IDLE;
+
+            /* Generate STOP condition */
+            ptReg->I2CM.SERCOM_CTRLB |= SERCOM_I2CM_CTRLB_CMD(3U);
+
+            u32TimeoutTemp = 12000U;
+            /* Wait for synchronization */
+            while((ptReg->I2CM.SERCOM_SYNCBUSY != 0x0U) && (u32TimeoutTemp > 0U))
+            {
+                u32TimeoutTemp = u32TimeoutTemp - 1U;
+            }
+
+            ptReg->I2CM.SERCOM_INTFLAG = SERCOM_I2CM_INTFLAG_Msk;
+
+            if (gtObj[u8Ch].callback != NULL)
+            {
+                gtObj[u8Ch].callback(gtObj[u8Ch].context);
+            }
+        }
+        else if(gtObj[u8Ch].state == SERCOM_I2C_STATE_TRANSFER_DONE)
+        {
+            /* Reset the PLib objects and interrupts */
+            gtObj[u8Ch].state = SERCOM_I2C_STATE_IDLE;
+            gtObj[u8Ch].error = SERCOM_I2C_ERROR_NONE;
+
+            ptReg->I2CM.SERCOM_INTFLAG = SERCOM_I2CM_INTFLAG_Msk;
+
+            u32TimeoutTemp = 12000U;
+            /* Wait for the NAK and STOP bit to be transmitted out and I2C state machine to rest in IDLE state */
+            while(((ptReg->I2CM.SERCOM_STATUS & SERCOM_I2CM_STATUS_BUSSTATE_Msk) != SERCOM_I2CM_STATUS_BUSSTATE(0x01U)) && (u32TimeoutTemp > 0U))
+            {
+                u32TimeoutTemp = u32TimeoutTemp -1U;
+            }
+
+            if(gtObj[u8Ch].callback != NULL)
+            {
+                gtObj[u8Ch].callback(gtObj[u8Ch].context);
+            }         
+        }
+        else
+        {/* Nothing */}
+    }
+    (void) ptReg->I2CM.SERCOM_INTFLAG;
+    (void) ptReg->I2CM.SERCOM_SYNCBUSY;
+    (void) ptReg->I2CM.SERCOM_STATUS;
+    (void) ptReg->I2CM.SERCOM_CTRLB;
+    }
+    else
+    {
+
+    }
+}
+// LDRA_EXCLUDE_END 76 D
+
