@@ -15,6 +15,10 @@
 /*---------------------------- Declare Data Structure ------------------------*/
 /*---------------------------- Declare Function ------------------------------*/
 extern uint8_t FmcDriver_Init(NvmCtrl_Config_ts *tsInitConfig);
+
+uint8_t FmcDriver_Eeprom_Read(Eeprom_Read_ts *tsEepromRead);
+uint8_t FmcDriver_Eeprom_Page_Write(Eeprom_Page_Write_ts *tsEepromWrite);
+uint8_t FmcDriver_Eeprom_Row_Erase(Eeprom_Row_Erase_ts *tsEepromErase);
 #if 0
 extern uint8_t FmcDriver_Busy_Status_Get(void);
 #endif

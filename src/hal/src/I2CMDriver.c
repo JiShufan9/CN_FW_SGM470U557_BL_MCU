@@ -204,6 +204,49 @@ bool master_i2c_stop(en_i2c_channel eCh)
     (void)ptdReg->I2CM.SERCOM_CTRLA;
     return bReturn;
 }
+
+bool i2c_nvic_enable(en_i2c_channel eCh)
+{
+    bool bReturn;
+    
+    /* Enable NIVC */
+    if(SERCOM_CH1 == eCh)
+    {
+        NVIC_SetPriority(SERCOM1_IRQn, 3U);
+        NVIC_EnableIRQ(SERCOM1_IRQn);  
+        bReturn = true;
+    }
+    else if(SERCOM_CH2 == eCh)
+    {
+        NVIC_SetPriority(SERCOM2_IRQn, 3U);
+        NVIC_EnableIRQ(SERCOM2_IRQn);    
+        bReturn = true;
+    }
+    else if(SERCOM_CH3 == eCh)
+    {
+        NVIC_SetPriority(SERCOM3_IRQn, 3U);
+        NVIC_EnableIRQ(SERCOM3_IRQn);    
+        bReturn = true;
+    }
+    else if(SERCOM_CH4 == eCh)
+    {
+        NVIC_SetPriority(SERCOM4_IRQn, 3U);
+        NVIC_EnableIRQ(SERCOM4_IRQn);
+        bReturn = true;
+    }
+    else if(SERCOM_CH5 == eCh)
+    {
+        NVIC_SetPriority(SERCOM5_IRQn, 3U);
+        NVIC_EnableIRQ(SERCOM5_IRQn);
+        bReturn = true;
+    }
+    else
+    {
+        bReturn = false ;
+    }
+    
+    return bReturn;
+}
 /** ===========================================================================
   @Function
     bool master_i2c_interrupt(st_i2c_master_config *i2cm)
@@ -259,9 +302,7 @@ bool master_i2c_interrupt(st_i2c_master_config *ptdDev)
       }
       else
       {
-        NVIC_SetPriority(SERCOM3_IRQn, 3U);
-        NVIC_EnableIRQ(SERCOM3_IRQn);    
-        bReturn = true; 
+        bReturn = i2c_nvic_enable(ptdDev->channel);
       }
       
     }
