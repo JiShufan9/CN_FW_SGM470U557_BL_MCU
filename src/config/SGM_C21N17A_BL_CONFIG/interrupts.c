@@ -90,6 +90,11 @@ void SERCOM0_3_ISR(void)
   SERCOM_I2CM_TCON_Handler();
 }
 
+void SERCOM0_5_ISR(void)
+{
+	SERCOM_I2CM_Handler(SERCOM_CH5);
+}
+
 __attribute__ ((section(".vectors")))
 const DeviceVectors exception_table=
 {
@@ -116,7 +121,7 @@ const DeviceVectors exception_table=
     .pfnSERCOM2_Handler            =  Unused_Handler,
     .pfnSERCOM3_Handler            =  SERCOM0_3_ISR,
     .pfnSERCOM4_Handler            =  Unused_Handler,
-    .pfnSERCOM5_Handler            =  Unused_Handler,
+    .pfnSERCOM5_Handler            =  SERCOM0_5_ISR,
     .pfnCAN0_Handler               =  Unused_Handler,
     .pfnCAN1_Handler               =  Unused_Handler,
     .pfnTCC0_Handler               =  Unused_Handler,

@@ -27,6 +27,12 @@
 #define 	FALSE				0x00U
 #define 	ENABLE_ON			1U
 #define 	ENABLE_OFF			0U
+#define DATA_0                                          0U
+#define DATA_1                                          1U
+#define DATA_2                                          2U
+#define DATA_3                                          3U
+#define DATA_4                                          4U
+#define DATA_5                                          5U
 /*---------------------------- Declare Enum ---------------------------------*/
 enum Status
 {

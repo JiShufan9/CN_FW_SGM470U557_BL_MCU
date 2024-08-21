@@ -93,6 +93,10 @@ typedef struct
 }Flash_Row_Erase_ts;
 /*---------------------------- Declare Function -------------------------------*/
 extern uint8_t NvmCtrl_Initialize(NvmCtrl_Config_ts *tsInitConfig);
+
+uint8_t NvmCtrl_RWWEEPROM_Read(Eeprom_Read_ts *tsEepromRead);
+uint8_t NvmCtrl_RWWEEPROM_PageWrite(Eeprom_Page_Write_ts *tsEepromWrite);
+uint8_t NvmCtrl_RWWEEPROM_RowErase(Eeprom_Row_Erase_ts *tsEepromErase);
 #if 0
 extern uint8_t NvmCtrl_CacheInvalidate(uint8_t u8Para);
 #endif
