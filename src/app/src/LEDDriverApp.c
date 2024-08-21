@@ -36,7 +36,7 @@ void LEDDriverApp_Initial(uint8_t u8Nothing)
     (void)FunApp_Delay_Millisecond(10, MODE_SYSTICK);                 /* Delay 10ms */ 
     uint8_t u8TxData_LEDDriver[LEDDRIVER_DATA_LEN_2];
     u8TxData_LEDDriver[DATA_0] = LEDDRIVER_MODE_CTRL_ADD;
-    u8TxData_LEDDriver[DATA_1] = 0x4EU;
+    u8TxData_LEDDriver[DATA_1] = 0x4FU;
     (void)I2cMasterApp_LEDDriver_Tx(LED_DRIVER_ADDRESS, u8TxData_LEDDriver, LEDDRIVER_DATA_LEN_2);
     
     u8TxData_LEDDriver[DATA_0] = LEDDRIVER_FREQ_FTM_ADD;
