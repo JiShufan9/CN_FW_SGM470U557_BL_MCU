@@ -84,13 +84,13 @@ void SERCOM0_6_ISR(void)
 	SERCOM0_6_Handler();
 }
 
-void SERCOM0_3_ISR(void)
+void SERCOM4_ISR(void)
 {
-	//SERCOM_I2CM_Handler(3U);
-  SERCOM_I2CM_TCON_Handler();
+	SERCOM_I2CM_Handler(SERCOM_CH4);
+//   SERCOM_I2CM_TCON_Handler();
 }
 
-void SERCOM0_5_ISR(void)
+void SERCOM5_ISR(void)
 {
 	SERCOM_I2CM_Handler(SERCOM_CH5);
 }
@@ -119,9 +119,9 @@ const DeviceVectors exception_table=
     .pfnSERCOM0_6_Handler          =  SERCOM0_6_ISR,
     .pfnSERCOM1_7_Handler          =  Unused_Handler,
     .pfnSERCOM2_Handler            =  Unused_Handler,
-    .pfnSERCOM3_Handler            =  SERCOM0_3_ISR,
-    .pfnSERCOM4_Handler            =  Unused_Handler,
-    .pfnSERCOM5_Handler            =  SERCOM0_5_ISR,
+    .pfnSERCOM3_Handler            =  Unused_Handler,
+    .pfnSERCOM4_Handler            =  SERCOM4_ISR,
+    .pfnSERCOM5_Handler            =  SERCOM5_ISR,
     .pfnCAN0_Handler               =  Unused_Handler,
     .pfnCAN1_Handler               =  Unused_Handler,
     .pfnTCC0_Handler               =  Unused_Handler,

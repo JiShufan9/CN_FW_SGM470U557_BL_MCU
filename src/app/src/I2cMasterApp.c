@@ -24,9 +24,9 @@ bool I2cMasterApp_Master_Initial(uint8_t u8Master)
 
     switch(u8Master)
     {
-        case I2C_MASTER_SERCOM_3:
+        case I2C_MASTER_SERCOM_4:
             gAPPI2cTcon.addr = ADDR_TCON;
-            gAPPI2cTcon.channel = SERCOM_CH3;
+            gAPPI2cTcon.channel = SERCOM_CH4;
             gAPPI2cTcon.speed = STANDARD_MODE;
             gAPPI2cTcon.baudrate = 400U;
             gAPPI2cTcon.callback = NULL;
@@ -70,10 +70,15 @@ bool I2cMasterApp_DeInitial(uint8_t u8Master)
 
     switch(u8Master)
     {
-        case I2C_MASTER_SERCOM_3:
-            (void)master_i2c_stop(SERCOM_CH3);
-            __NVIC_DisableIRQ(SERCOM3_IRQn);
+        case I2C_MASTER_SERCOM_4:
+            (void)master_i2c_stop(SERCOM_CH4);
+            __NVIC_DisableIRQ(SERCOM4_IRQn);
 
+            bReturn = true;
+        break;
+        case I2C_MASTER_SERCOM_5:
+            (void)master_i2c_stop(SERCOM_CH5);
+            __NVIC_DisableIRQ(SERCOM5_IRQn);
             bReturn = true;
         break;
 
@@ -101,7 +106,7 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
 
     switch(u8Master)
     {
-        case I2C_MASTER_SERCOM_3:
+        case I2C_MASTER_SERCOM_4:
             if (true == master_i2c_transmitte(&gAPPI2cTcon, u8Data, u32Len))
             {
                 while((true == SERCOM_I2CM_IsBusy(gAPPI2cTcon.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
@@ -111,7 +116,7 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
             }
             else
             {
-                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_4);
             }
         break;
         case I2C_MASTER_SERCOM_5:
@@ -153,7 +158,7 @@ bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8
 
     switch(u8Master)
     {
-        case I2C_MASTER_SERCOM_3:
+        case I2C_MASTER_SERCOM_4:
             if(true == master_i2c_writeread(&gAPPI2cTcon, u8TxData, u32TxLen, u8RxData, u32RxLen))
             {
                 while((true == SERCOM_I2CM_IsBusy(gAPPI2cTcon.channel)) && (u32Jump < I2CMASTERAPP_TIMEOUT_COUNTER))
@@ -163,7 +168,7 @@ bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8
             }
             else
             {
-                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_3);
+                (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_4);
             }
         break;
         case I2C_MASTER_SERCOM_5:

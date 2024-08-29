@@ -112,6 +112,21 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="app" displayName="app" projectFiles="true">
+        <logicalFolder name="fal" displayName="fal" projectFiles="true">
+          <logicalFolder name="inc" displayName="inc" projectFiles="true">
+            <itemPath>../src/app/fal/inc/fal.h</itemPath>
+            <itemPath>../src/app/fal/inc/fal_def.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="porting" displayName="port" projectFiles="true">
+            <itemPath>../src/app/fal/port/fal_cfg.h</itemPath>
+            <itemPath>../src/app/fal/port/fal_flash_sfud_port.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="src" displayName="src" projectFiles="true">
+            <itemPath>../src/app/fal/src/fal.c</itemPath>
+            <itemPath>../src/app/fal/src/fal_flash.c</itemPath>
+            <itemPath>../src/app/fal/src/fal_partition.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
         <logicalFolder name="inc" displayName="inc" projectFiles="true">
           <itemPath>../src/app/inc/ClockApp.h</itemPath>
           <itemPath>../src/app/inc/CrcApp.h</itemPath>
@@ -129,6 +144,36 @@
           <itemPath>../src/app/inc/WakeCtrlApp.h</itemPath>
           <itemPath>../src/app/inc/EepromApp.h</itemPath>
           <itemPath>../src/app/inc/LEDDriverApp.h</itemPath>
+          <itemPath>../src/app/inc/SourceIcM.h</itemPath>
+          <itemPath>../src/app/inc/SourceIcSpiIf.h</itemPath>
+          <itemPath>../src/app/inc/TconM.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="NodesInterface"
+                       displayName="NodesInterface"
+                       projectFiles="true">
+          <itemPath>../src/app/NodesInterface/McuUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/NodeUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/SourceIcExtFlashUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/McuUpdate.h</itemPath>
+          <itemPath>../src/app/NodesInterface/NodeUpdate.h</itemPath>
+          <itemPath>../src/app/NodesInterface/SourceIcExtFlashUpdate.h</itemPath>
+          <itemPath>../src/app/NodesInterface/TconUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/TconUpdate.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="sfud" displayName="sfud" projectFiles="true">
+          <logicalFolder name="inc" displayName="inc" projectFiles="true">
+            <itemPath>../src/app/sfud/inc/sfud.h</itemPath>
+            <itemPath>../src/app/sfud/inc/sfud_cfg.h</itemPath>
+            <itemPath>../src/app/sfud/inc/sfud_def.h</itemPath>
+            <itemPath>../src/app/sfud/inc/sfud_flash_def.h</itemPath>
+          </logicalFolder>
+          <logicalFolder name="port" displayName="port" projectFiles="true">
+            <itemPath>../src/app/sfud/port/sfud_port.c</itemPath>
+          </logicalFolder>
+          <logicalFolder name="src" displayName="src" projectFiles="true">
+            <itemPath>../src/app/sfud/src/sfud.c</itemPath>
+            <itemPath>../src/app/sfud/src/sfud_sfdp.c</itemPath>
+          </logicalFolder>
         </logicalFolder>
         <logicalFolder name="src" displayName="src" projectFiles="true">
           <itemPath>../src/app/src/ClockApp.c</itemPath>
@@ -147,6 +192,9 @@
           <itemPath>../src/app/src/WakeCtrlApp.c</itemPath>
           <itemPath>../src/app/src/EepromApp.c</itemPath>
           <itemPath>../src/app/src/LEDDriverApp.c</itemPath>
+          <itemPath>../src/app/src/SourceIcM.c</itemPath>
+          <itemPath>../src/app/src/SourceIcSpiIf.c</itemPath>
+          <itemPath>../src/app/src/TconM.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f1" displayName="config" projectFiles="true">
@@ -203,6 +251,8 @@
           <itemPath>../src/hal/inc/hal_wdt_def.h</itemPath>
           <itemPath>../src/hal/inc/hal_common.h</itemPath>
           <itemPath>../src/hal/inc/PortDriver.h</itemPath>
+          <itemPath>../src/hal/inc/plib_sercom6_spi_master.h</itemPath>
+          <itemPath>../src/hal/inc/plib_sercom_spi_master_common.h</itemPath>
         </logicalFolder>
         <logicalFolder name="plib_auo" displayName="plib_auo" projectFiles="true">
           <logicalFolder name="inc" displayName="inc" projectFiles="true">
@@ -246,6 +296,7 @@
           <itemPath>../src/hal/src/I2CMDriver.c</itemPath>
           <itemPath>../src/hal/src/PMDriver.c</itemPath>
           <itemPath>../src/hal/src/PwmDriver.c</itemPath>
+          <itemPath>../src/hal/src/plib_sercom6_spi_master.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <itemPath>../src/main.h</itemPath>
@@ -360,7 +411,7 @@
         <property key="enable-unroll-loops" value="false"/>
         <property key="exclude-floating-point" value="false"/>
         <property key="extra-include-directories"
-                  value="../src;../src/config/SGM_C21N17A_BL_CONFIG;../src/packs/ATSAMC21N17A_DFP;../src/packs/CMSIS/CMSIS/Core/Include;../src/packs/CMSIS/;..\src\hal\inc"/>
+                  value="../src;../src/config/SGM_C21N17A_BL_CONFIG;../src/packs/ATSAMC21N17A_DFP;../src/packs/CMSIS/CMSIS/Core/Include;../src/packs/CMSIS/;..\src\hal\inc;../src/app/fal/inc;../src/app/fal/port;../src/app/sfud/inc;../src/app/sfud/port"/>
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>

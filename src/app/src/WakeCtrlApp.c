@@ -172,7 +172,9 @@ uint8_t WakeCtrlApp_PreSleep_Driver_DeInitial(uint8_t u8Para)
 {
 	(void)WatchDogApp_Clean(MODE_ClearWithoutSync);
 
-    (void)I2cMasterApp_DeInitial(I2C_MASTER_SERCOM_3);
+    (void)I2cMasterApp_DeInitial(I2C_MASTER_SERCOM_4);
+    (void)I2cMasterApp_DeInitial(I2C_MASTER_SERCOM_5);
+    //todo deinit source ic spi
 	(void)I2cSlaveApp_Slave_DeInitial();
 	(void)AdcApp_Turn_OnOff_Switch(ADC_DISABLE);
     (void)WatchDogApp_Initial(DISABLE);
