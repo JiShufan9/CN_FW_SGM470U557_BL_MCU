@@ -101,8 +101,10 @@ bool I2cMasterApp_DeInitial(uint8_t u8Master)
 ******************************************************************************/
 bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
 {
+    bool ret = true;
     uint32_t u32Len = (uint32_t)u8Len;
 	uint32_t u32Jump = 0UL;
+    uint16_t u16delayCnt;
 
     switch(u8Master)
     {
@@ -113,9 +115,16 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
                 {
                     u32Jump += 1UL;
                 }
+
+                u16delayCnt = 4000U;
+                while(u16delayCnt > 0)
+                {
+                    u16delayCnt --;
+                }
             }
             else
             {
+                ret = false;
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_4);
             }
         break;
@@ -129,16 +138,17 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
             }
             else
             {
+                ret = false;
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5);
             }
         break;
 
         default:
-            /* NOTHING */
+            ret = false;
         break;
     }
 
-    return true;
+    return ret;
 }
 #endif
 /******************************************************************************
@@ -152,9 +162,11 @@ bool I2cMasterApp_Tx(uint8_t u8Master, uint8_t *u8Data, uint8_t u8Len)
 #if I2CMASTERAPP_ENABLE_RX
 bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8_t *u8RxData, uint8_t u8RxLen)
 {
+    bool ret = true;
 	uint32_t u32Jump = 0UL;
 	uint32_t u32TxLen = (uint32_t)u8TxLen;
 	uint32_t u32RxLen = (uint32_t)u8RxLen;
+    uint16_t u16delayCnt;
 
     switch(u8Master)
     {
@@ -165,9 +177,16 @@ bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8
                 {
                     u32Jump += 1UL;
                 }
+
+                u16delayCnt = 4000u;
+                while(u16delayCnt > 0)
+                {
+                    u16delayCnt --;
+                }
             }
             else
             {
+                ret = false;
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_4);
             }
         break;
@@ -181,15 +200,16 @@ bool I2cMasterApp_Rx(uint8_t u8Master, uint8_t *u8TxData, uint8_t u8TxLen, uint8
             }
             else
             {
+                ret = false;
                 (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5);
             }
         break;
         default:
-            /* NOTHING */
+            ret = false;
         break;
     }
 
-    return true;
+    return ret;
 }
 #endif
 /*--------------------------------------END-------------------------------*/

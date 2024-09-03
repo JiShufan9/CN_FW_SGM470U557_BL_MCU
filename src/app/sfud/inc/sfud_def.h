@@ -113,7 +113,7 @@ if (!(EXPR))                                                                   \
 #endif
 
 #ifndef SFUD_CMD_AAI_WORD_PROGRAM
-#define SFUD_CMD_AAI_WORD_PROGRAM                      0xADU
+#define SFUD_CMD_AAI_WORD_PROGRAM                      0xADU  /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_ERASE_CHIP
@@ -133,11 +133,11 @@ if (!(EXPR))                                                                   \
 #endif
 
 #ifndef SFUD_CMD_QUAD_IO_READ_DATA
-#define SFUD_CMD_QUAD_IO_READ_DATA                     0xEBU
+#define SFUD_CMD_QUAD_IO_READ_DATA                     0xEBU /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_QUAD_OUTPUT_READ_DATA
-#define SFUD_CMD_QUAD_OUTPUT_READ_DATA                 0x6BU
+#define SFUD_CMD_QUAD_OUTPUT_READ_DATA                 0x6BU /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_MANUFACTURER_DEVICE_ID
@@ -153,24 +153,28 @@ if (!(EXPR))                                                                   \
 #endif
 
 #ifndef SFUD_CMD_READ_SFDP_REGISTER
-#define SFUD_CMD_READ_SFDP_REGISTER                    0x5AU
+#define SFUD_CMD_READ_SFDP_REGISTER                    0x5AU  /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_ENABLE_RESET
-#define SFUD_CMD_ENABLE_RESET                          0x66U
+#define SFUD_CMD_ENABLE_RESET                          0x66U  /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_RESET
-#define SFUD_CMD_RESET                                 0x99U
+#define SFUD_CMD_RESET                                 0x99U  /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_ENTER_4B_ADDRESS_MODE
-#define SFUD_CMD_ENTER_4B_ADDRESS_MODE                 0xB7U
+#define SFUD_CMD_ENTER_4B_ADDRESS_MODE                 0xB7U  /* W25X20CV NOT USED */
 #endif
 
 #ifndef SFUD_CMD_EXIT_4B_ADDRESS_MODE
-#define SFUD_CMD_EXIT_4B_ADDRESS_MODE                  0xE9U
+#define SFUD_CMD_EXIT_4B_ADDRESS_MODE                  0xE9U  /* W25X20CV NOT USED */
 #endif
+
+
+#define     W25X20CV_CMD_POWER_DOWN                     0xB9U
+#define     W25X20CV_CMD_RELEASE_POWER_DOWN             0xABU
 
 #ifndef SFUD_WRITE_MAX_PAGE_SIZE
 #define SFUD_WRITE_MAX_PAGE_SIZE                        256

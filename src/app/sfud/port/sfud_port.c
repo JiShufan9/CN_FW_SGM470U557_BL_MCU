@@ -118,8 +118,15 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
         flash->spi.user_data = NULL;
         /* about 100 microsecond delay */
         flash->retry.delay = sfud_retry_delay;
-        /* adout 60 seconds timeout */
-        flash->retry.times = 60U * 10000U;
+        /* timeout */
+        flash->retry.times =  10000U;
+
+        uint8_t buf[2] = {0U};
+        buf[0] = 0xB9U;
+        spi_write_read(NULL, buf, 1U, NULL,0U); /* POWER DOWN */
+        sfud_retry_delay();
+        buf[0] = 0xABU;
+        spi_write_read(NULL, buf, 1U, NULL,0U); /*  RELEASE POWER DOWN */
         break;
     default:
         /* nothing */

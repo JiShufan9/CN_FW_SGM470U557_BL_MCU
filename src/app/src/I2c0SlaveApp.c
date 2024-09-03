@@ -493,6 +493,9 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                             #if DEBUG_UART
                                 //Uart1App_String_Show("Flash write SUCCESS\r");
                             #endif
+                            #if AUTO_MATCH_ADDRESS
+                                gu16PageCounter += 1U;
+                            #endif
                         }
                         else
                         {
@@ -507,9 +510,6 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                         }
 
 #endif
-                        #if AUTO_MATCH_ADDRESS
-                            gu16PageCounter += 1U;
-                        #endif
                     }
                     else
                     {

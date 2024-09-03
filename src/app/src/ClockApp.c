@@ -36,7 +36,7 @@ uint8_t ClockApp_Init(uint8_t u8Para)
 	/* Configure GCLK Clocks */
     (void)ClockDriver_GCLKToPeri(GCLK_SERCOM0_CORE,GCLKGEN0);           /* I2C Slave */
     (void)ClockDriver_GCLKToPeri(GCLK_SERCOM1_CORE,GCLKGEN0);           /* Debug UART */
-    (void)ClockDriver_GCLKToPeri(GCLK_SERCOM4_CORE,GCLKGEN0);           /* Debug UART */
+    (void)ClockDriver_GCLKToPeri(GCLK_SERCOM4_CORE,GCLKGEN0);           /* TCON I2C */
     (void)ClockDriver_GCLKToPeri(GCLK_SERCOM5_CORE,GCLKGEN0);       /* Led Driver , I2C , Master */
     (void)ClockDriver_GCLKToPeri(GCLK_SERCOM6_CORE,GCLKGEN0);           /* SOURCE IC SPI */
 

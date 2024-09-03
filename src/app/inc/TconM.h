@@ -24,7 +24,7 @@
 /* ************************************************************************** */
 /* Section: Macro Definition                                                  */
 /* ************************************************************************** */
-
+#define    BURST_MODE_EN   ENABLE_ON
 /* ************************************************************************** */
 /* Section: Enum                                                              */
 /* ************************************************************************** */
@@ -47,6 +47,7 @@
 uint8_t TconM_WriteByte(uint8_t page, uint8_t address, uint8_t data);
 uint8_t TconM_ReadByte(uint8_t page, uint8_t address, uint8_t* readValue);
 uint8_t TconM_SetIcAccessKey(void);
+uint8_t TconM_SetMagic(void);
 uint8_t TconM_ReleasePowerDown(void);
 uint8_t TconM_PowerDown(void);
 uint8_t TconM_ChipErase(void);

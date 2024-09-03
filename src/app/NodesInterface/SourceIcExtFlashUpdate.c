@@ -19,6 +19,7 @@
 #include "app/fal/inc/fal.h"
 #include "app/inc/SourceIcM.h"
 #include "app/inc/CrcApp.h"
+#include "app/inc/FunApp.h"
 /* ************************************************************************** */
 /* Section: Global Variable                                                   */
 /* ************************************************************************** */
@@ -64,6 +65,7 @@ uint8_t SourceIcExtFlashUpdate_EarseFunc(void)
 
         
         (void)SourceIcM_EnterExtFlsBypassMode(SOURCE_IC_IDX_MASTER);
+        (void)FunApp_Delay_Millisecond(10U, MODE_SYSTICK);
         (void)sfud_init();
         (void)fal_init();
         psSourceIcConfPart = fal_partition_find(SOURCE_IC_FLS_PART_NAME);

@@ -16,6 +16,7 @@
 #if (SOURCE_IC_M_CLASS_EN == ENABLE)
 
 #include "app/inc/SourceIcSpiIf.h"
+#include "app/inc/FunApp.h"
 /* ************************************************************************** */
 /* Section: Global Variable                                                   */
 /* ************************************************************************** */
@@ -122,6 +123,24 @@ static void SourceIcM_SetCmd(uint8_t CmdIdx,uint8_t idx,uint8_t addr,uint8_t WrF
   Function Descripttion        :     
                                    
 ********************************************************************************/
+static uint8_t SourceIcM_Write(uint8_t idx,uint8_t addr,uint8_t value)
+{
+    uint8_t ret;
+
+    SourceIcM_SetCmd(1U, idx, addr, FLAG_W, 1u);
+    SourceIcCmdArr[1]._s.u8Buf[0] = value;
+    ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[1]);
+    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    
+    return ret;
+}
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
 // LDRA_EXCLUDE_START 72 D
 static uint8_t SourceIcM_WriteAndCheck(uint8_t idx,uint8_t addr,uint8_t value)
 {
@@ -132,8 +151,10 @@ static uint8_t SourceIcM_WriteAndCheck(uint8_t idx,uint8_t addr,uint8_t value)
     ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[1]);
     if((ret == TRUE))
     {
+        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
         SourceIcM_SetCmd(0U, idx, addr, FLAG_R, 1u);
         ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[0]);
+        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
         if((ret == TRUE) && (SourceIcCmdArr[0]._s.u8Buf[0] != value))
         {
             ret = FALSE;
@@ -255,7 +276,7 @@ uint8_t SourceIcM_EnterExtFlsBypassMode(uint8_t idx)
     {
         ret = FALSE;
     }
-    else if(TRUE != SourceIcM_WriteAndCheck(idx,0x01U,0x96U)) /* FLASH control source selection */
+    else if(TRUE != SourceIcM_Write(idx,0x01U,0x96U)) /* FLASH control source selection */
     {
         ret = FALSE;
     }
@@ -281,7 +302,7 @@ uint8_t SourceIcM_ExitExtFlsBypassMode(uint8_t idx)
     {
         ret = FALSE;
     }
-    else if(TRUE != SourceIcM_WriteAndCheck(idx,0x01U,0x04U)) /* Global reset setting */
+    else if(TRUE != SourceIcM_Write(idx,0x01U,0x04U)) /* Global reset setting */
     {
         ret = FALSE;
     }
