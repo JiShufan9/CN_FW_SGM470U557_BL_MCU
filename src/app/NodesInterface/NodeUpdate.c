@@ -23,15 +23,15 @@
 /* ************************************************************************** */
 
 TsNode sUpdateNodeArr[] = { 
-    // {
-    //     NODE_ID_MCU,
-    //     0x00u,
-    //     0x00u,
-    //     0x00u,
-    //     McuUpdate_EarseFunc,
-    //     McuUpdate_UpdateFunc,
-    //     McuUpdate_CheckFunc
-    // },
+    {
+        NODE_ID_MCU,
+        0x00u,
+        0x00u,
+        0x00u,
+        McuUpdate_EarseFunc,
+        McuUpdate_UpdateFunc,
+        McuUpdate_CheckFunc
+    },
     {
         NODE_ID_TCON,
         0x00u,
@@ -41,15 +41,15 @@ TsNode sUpdateNodeArr[] = {
         TconUpdate_UpdateFunc,
         TconUpdate_CheckFunc
     },
-    // {
-    //     NODE_ID_SOURCE_IC,
-    //     0x00u,
-    //     0x00u,
-    //     0x00u,
-    //     SourceIcExtFlashUpdate_EarseFunc,
-    //     SourceIcExtFlashUpdate_UpdateFunc,
-    //     SourceIcExtFlashUpdate_CheckFunc
-    // }
+    {
+        NODE_ID_SOURCE_IC,
+        0x00u,
+        0x00u,
+        0x00u,
+        SourceIcExtFlashUpdate_EarseFunc,
+        SourceIcExtFlashUpdate_UpdateFunc,
+        SourceIcExtFlashUpdate_CheckFunc
+    }
 };
 
 
@@ -274,6 +274,7 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
                 if(u8Temp != OP_SUCCESS)
                 {
                     ret &= ~(1u << i); /* if op fail, clear flag bit */
+                    __NOP();
                 }
                 break;
             }

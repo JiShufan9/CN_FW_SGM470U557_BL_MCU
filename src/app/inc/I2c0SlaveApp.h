@@ -98,7 +98,7 @@
 #define     ADDR_APP_CRC32      0x17FFCU    /* 0x13FFC ~ 0x13FFF (4 bytes) for 16KB, 0x17FFC ~ 0x17FFF (4 bytes) for 32KB */
 
 #define ADDR_START              0u
-#define SIZE_TOTAL_BASE         (512U * UNIT_KB)
+#define SIZE_TOTAL_BASE         (833U * UNIT_KB)
 
 /* Bootloader Status Flags Packets - Bootloader Status 1 */
 #define     SET_BL_ACTIVE               0x01U

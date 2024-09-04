@@ -56,9 +56,9 @@ uint8_t TconM_WriteEnable(void);
 uint8_t TconM_CheckStatus(uint8_t checkBit, uint8_t expectedValue);
 uint8_t TconM_ReadStatus(uint8_t* returnByte);
 uint8_t TconM_WriteStatus(uint8_t data);
-uint8_t TconM_Program(uint8_t* binBuffer, uint8_t addr, uint16_t size);
-uint8_t TconM_ProgramData(uint8_t* binBuffer, uint8_t addr, uint16_t size);
-uint8_t TconM_Read(uint8_t addr, uint16_t size, uint8_t* buffer);
+uint8_t TconM_Program(uint8_t* binBuffer, uint32_t addr, uint32_t size);
+uint8_t TconM_ProgramData(uint8_t* binBuffer, uint32_t addr, uint32_t size);
+uint8_t TconM_Read(uint32_t addr, uint32_t size, uint8_t* buffer);
 
 
 #endif
