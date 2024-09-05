@@ -108,7 +108,8 @@ uint8_t InitApp_All(void)
     (void)AdcApp_Start();
     (void)I2c0SlaveApp_BL_Status1_Set(SET_BL_ACTIVE);       /* Firest time active BL mode */
     (void)InitApp_StateMachine_Set(BL_TASK);			/* Jump to TASK state */     
-    (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5);
+    (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_2); /* Source IC I2C */
+    (void)I2cMasterApp_Master_Initial(I2C_MASTER_SERCOM_5); /* LED DRV I2C */
 		LEDDriverApp_Initial(NOTHING);
 	
 	return true;

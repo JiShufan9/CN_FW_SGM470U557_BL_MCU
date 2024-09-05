@@ -27,21 +27,21 @@
 #define		LOOP_MAX			0xFFFFFFFFU
 #define		TIME_BL_ACTIVE		1U
 /*---------------------------- Support Function -----------------------------*/
-#define		DEBUG_UART			false
-#define		WRITE_COUNT_TEST    false
-#define		SYS_TICK			true
-#define		VTOS				true
-#define		NVIC_ENABLE			true
-#define		FLASH_ERASE			true
-#define		FLASH_WRITE			true
-#define		FLASH_READ			true
-#define		PWM2_OUTPUT			false
-#define		ADC_BATT			true
-#define		I2C0_SLAVE			true
-#define     CRC16_CHECK         true
-#define     CRC32_CHECK         true
-#define		WDT_RST				true
-#define     HW_VERSION          true
+#define		DEBUG_UART			FALSE
+#define		WRITE_COUNT_TEST    FALSE
+#define		SYS_TICK			TRUE
+#define		VTOS				TRUE
+#define		NVIC_ENABLE			TRUE
+#define		FLASH_ERASE			TRUE
+#define		FLASH_WRITE			TRUE
+#define		FLASH_READ			TRUE
+#define		PWM2_OUTPUT			FALSE
+#define		ADC_BATT			TRUE
+#define		I2C0_SLAVE			TRUE
+#define     CRC16_CHECK         TRUE
+#define     CRC32_CHECK         TRUE
+#define		WDT_RST				TRUE
+#define     HW_VERSION          TRUE
 
 /*---------------------------- Declare Enum ---------------------------------*/
 /* Bit Shift */
@@ -152,5 +152,7 @@ uint8_t MainApp_GetBacklightType(void);
 bool MainApp_BLControl(void);
 extern uint8_t MainApp_Task_1ms(uint8_t u8Para);
 extern uint8_t MainApp_Task_1s(uint8_t u8Para);
+#if 0
 void mainApp_SetBacklightDimmingType(void);
+#endif
 #endif

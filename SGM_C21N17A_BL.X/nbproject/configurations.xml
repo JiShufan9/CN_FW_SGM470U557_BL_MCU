@@ -129,6 +129,18 @@
           <itemPath>../src/app/inc/WakeCtrlApp.h</itemPath>
           <itemPath>../src/app/inc/EepromApp.h</itemPath>
           <itemPath>../src/app/inc/LEDDriverApp.h</itemPath>
+          <itemPath>../src/app/inc/SourceIcM.h</itemPath>
+          <itemPath>../src/app/inc/EepRomM.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="NodesInterface"
+                       displayName="NodesInterface"
+                       projectFiles="true">
+          <itemPath>../src/app/NodesInterface/McuUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/NodeUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/SourceIcExtFlashUpdate.c</itemPath>
+          <itemPath>../src/app/NodesInterface/McuUpdate.h</itemPath>
+          <itemPath>../src/app/NodesInterface/NodeUpdate.h</itemPath>
+          <itemPath>../src/app/NodesInterface/SourceIcExtFlashUpdate.h</itemPath>
         </logicalFolder>
         <logicalFolder name="src" displayName="src" projectFiles="true">
           <itemPath>../src/app/src/ClockApp.c</itemPath>
@@ -147,6 +159,8 @@
           <itemPath>../src/app/src/WakeCtrlApp.c</itemPath>
           <itemPath>../src/app/src/EepromApp.c</itemPath>
           <itemPath>../src/app/src/LEDDriverApp.c</itemPath>
+          <itemPath>../src/app/src/SourceIcM.c</itemPath>
+          <itemPath>../src/app/src/EepRomM.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f1" displayName="config" projectFiles="true">

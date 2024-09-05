@@ -36,6 +36,7 @@ uint8_t MainApp_getDisplayID(void)
 	return (uint8_t)(gDisplayID);
 }
 
+#if 0
 void mainApp_SetBacklightDimmingType(void)
 {
 	uint8_t u8DimmingSetting = 0U;
@@ -64,6 +65,7 @@ void mainApp_SetBacklightDimmingType(void)
 	(void)u8Idx;
 	(void)u8DimmingSetting;
 }
+#endif
 /******************************************************************************
 ;Author: Orlando Huang
 ;Description: Controlinf backlight from different project type

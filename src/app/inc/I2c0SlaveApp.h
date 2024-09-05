@@ -97,6 +97,8 @@
 #define     ADDR_FIDM_VER       0x17FF0U    /* 0x13FF0 ~ 0x13FF7 (8 bytes) for 16KB, 0x17FF0 ~ 0x17FF7 (8 bytes) for 32KB */
 #define     ADDR_APP_CRC32      0x17FFCU    /* 0x13FFC ~ 0x13FFF (4 bytes) for 16KB, 0x17FFC ~ 0x17FFF (4 bytes) for 32KB */
 
+#define ADDR_START              0u
+#define SIZE_TOTAL_BASE         (71U * UNIT_KB)
 /* Bootloader Status Flags Packets - Bootloader Status 1 */
 #define     SET_BL_ACTIVE               0x01U
 #define     SET_APP_UNLOCK              0x02U
