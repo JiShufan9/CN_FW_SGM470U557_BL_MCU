@@ -14,7 +14,6 @@
 #include "app/inc/WatchDogApp.h"
 #include "hal/inc/RegsAccessDriver.h"
 #include "peripheral/systick/plib_systick.h"
-#include "app/inc/SourceIcM.h"
 
 /*---------------------------- Declare External Var --------------------------*/
 
@@ -184,20 +183,12 @@ static uint8_t FunApp_Jump_to_App_Check(uint8_t u8Para)
 ******************************************************************************/
 static uint8_t FunApp_App_Crc_Check(void)
 {
-//    uint8_t u8EEPCheckSumErr = TRUE;
 	if(I2c0SlaveApp_Crc32_Check(TIMES_APP_MEM) == true)		/* Check APP CRC */
 	{	
         #if DEBUG_UART
 			Uart1App_String_Show("App Crc32 PASS\r");
 			Uart1App_String_Show("Jump to APP mode\r");
         #endif
-        // if(TRUE == SourceIcM_ReadFlashCrcInd(&u8EEPCheckSumErr))
-        // {
-        //     if(u8EEPCheckSumErr == FALSE)
-        //     {
-        //         (void)FunApp_Jump_to_App_Check(NOTHING);/* Jump to APP */
-        //     }
-        // }
         (void)FunApp_Jump_to_App_Check(NOTHING);/* Jump to APP */
 					
 		gbCrc32FailFlag = false;	/* CRC32 is correct */

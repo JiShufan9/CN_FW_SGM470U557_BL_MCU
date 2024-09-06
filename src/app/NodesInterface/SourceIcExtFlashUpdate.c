@@ -19,6 +19,7 @@
 #include "app/inc/EepRomM.h"
 #include "app/inc/CrcApp.h"
 #include "app/inc/FunApp.h"
+#include "app/NodesInterface/NodeUpdate.h"
 /* ************************************************************************** */
 /* Section: Global Variable                                                   */
 /* ************************************************************************** */
@@ -217,47 +218,6 @@ static uint8_t SourceIcExtFlashUpdate_CmpData(uint8_t* buf1,uint8_t * buf2, uint
   Function Descripttion        :     
                                    
 ********************************************************************************/
-#define   GetBoundary(start,end) \
-if((addr) < (start))\
-{\
-    u32TempAddr = (start); \
-}\
-else\
-{\
-    u32TempAddr = (addr);\
-}\
-if(((addr) + (len) - 1U) < (end))\
-{\
-    u32TempEnd = ((addr) + (len) - 1U);\
-}\
-else\
-{\
-    u32TempEnd = (end);\
-}\
-
-
-//static uint8_t SourceIcExtFlashUpdate_CrcCalculate(uint32_t addr,uint32_t len,uint8_t * buf)
-//{
-//    uint8_t ret = OP_SUCCESS;
-////    uint32_t u32TempAddr;
-////    uint32_t u32TempEnd;
-//    
-//    /* 3F7h Checksum / CRC _LUT (RT) R14Dh~R1CAh */
-//    // GetBoundary(0x002U,0x146U);
-//    // if(u32TempAddr <= u32TempEnd)
-//    // {
-//        
-//    // }
-//    
-//    return ret;
-//}
-/*******************************************************************************
-  Function Name                :    
-  Parameters                   :    
-  Return Values                :    
-  Function Descripttion        :     
-                                   
-********************************************************************************/
 uint8_t SourceIcExtFlashUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
 {
     uint8_t ret = OP_SUCCESS;
@@ -284,14 +244,22 @@ uint8_t SourceIcExtFlashUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * b
             ret = OP_ERR;
         }
 #endif
-        // else if(OP_SUCCESS != SourceIcExtFlashUpdate_CrcCalculate(addr,len,u8ReadBackBuf))
-        // {
-        //     ret = OP_ERR;
-        // }
         else
         {
             u32LocalCrc = CrcApp_Crc32_Calculation(buf, len, u32LocalCrc);
-            ret = OP_SUCCESS;
+            if((addr + len) == SIZE_SOURCE_IC_FW)
+            {
+                u32LocalCrc = (~u32LocalCrc);
+                if(u32LocalCrc != NodeUpdate_GetBlockCrc(NODE_ID_SOURCE_IC))
+                {
+                    ret = OP_ERR;
+                    __NOP();
+                }
+            }
+            else
+            {
+                ret = OP_SUCCESS;
+            }
         }
     }
     return ret;
