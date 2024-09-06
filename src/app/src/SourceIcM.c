@@ -79,11 +79,20 @@ uint8_t SourceIcM_ReadICVersion(uint8_t idx,uint8_t result)
   Function Descripttion        :    Read System Version And Display Initial CodeVersion
                                    
 ********************************************************************************/
-#if 0
-uint8_t SourceIcM_ReadVersionInfo(uint8_t idx,uint8_t *result)
+#if 1
+uint8_t SourceIcM_ReadVersionInfo(uint8_t *result)
 {
     uint8_t ret;
-
+    if(TRUE != SourceIcM_PageSelect(CMD1_PZ)) 
+    {
+        ret = FALSE;
+    }
+    else
+    {
+        I2cMasterApp_SetDesI2cAddr(I2C_MASTER_SERCOM_2,ADDR_SOURCE_IC);
+        SourceIcTxBuf[0] = 0x01U;
+        ret = I2cMasterApp_Rx(I2C_MASTER_SERCOM_2, SourceIcTxBuf, 1U,result,1U);
+    }
 
     return ret;
 }
@@ -103,6 +112,37 @@ uint8_t SourceIcM_ReadDtc(uint8_t idx,uint8_t *result)
     return ret;
 }
 #endif
+
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+#if 1
+uint8_t SourceIcM_ReadFlashCrcInd(uint8_t *result)
+{
+    uint8_t ret;
+
+    if(TRUE != SourceIcM_PageSelect(CMD2_P2))
+    {
+        ret = FALSE;
+    }
+    else
+    {
+        I2cMasterApp_SetDesI2cAddr(I2C_MASTER_SERCOM_2,ADDR_SOURCE_IC);
+        SourceIcTxBuf[0] = 0x1CU;
+        ret = I2cMasterApp_Rx(I2C_MASTER_SERCOM_2, SourceIcTxBuf, 1U,result,1U);
+        if(TRUE == ret)
+        {
+            (*result) = ( (*result) & 0x02U) >> 1U; /* ER_C01 EEPROM Checksum/CRC Error Indicator bit */
+        }
+    }
+
+    return ret;
+}
+#endif
 /*******************************************************************************
   Function Name                :    
   Parameters                   :    
@@ -113,7 +153,7 @@ uint8_t SourceIcM_ReadDtc(uint8_t idx,uint8_t *result)
 uint8_t SourceIcM_EnterExtFlsBypassMode(void)
 {
     uint8_t ret = TRUE;
-    if(TRUE != SourceIcM_PageSelect(0x20U))
+    if(TRUE != SourceIcM_PageSelect(CMD2_P0))
     {
         ret = FALSE;
     }
@@ -138,7 +178,7 @@ uint8_t SourceIcM_EnterExtFlsBypassMode(void)
 uint8_t SourceIcM_ExitExtFlsBypassMode(void)
 {
     uint8_t ret;
-    if(TRUE != SourceIcM_PageSelect(0x20U))
+    if(TRUE != SourceIcM_PageSelect(CMD2_P0))
     {
         ret = FALSE;
     }

@@ -185,7 +185,9 @@ bool I2cMasterApp_Rx(uint8_t u8Master,uint8_t *u8TxData, uint8_t u8TxLen, uint8_
 	uint32_t u32Jump = 0UL;
 	uint32_t u32TxLen = (uint32_t)u8TxLen;
 	uint32_t u32RxLen = (uint32_t)u8RxLen;
+#if COM2_INSERT_FRAME_GAP
     uint16_t u16delayCnt;
+#endif
 
     switch(u8Master)
     {
@@ -196,12 +198,13 @@ bool I2cMasterApp_Rx(uint8_t u8Master,uint8_t *u8TxData, uint8_t u8TxLen, uint8_
                 {
                     u32Jump += 1UL;
                 }
-
+#if COM2_INSERT_FRAME_GAP
                 u16delayCnt = 2000u;
                 while(u16delayCnt > 0)
                 {
                     u16delayCnt --;
                 }
+#endif
             }
             else
             {
