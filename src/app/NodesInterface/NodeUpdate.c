@@ -28,12 +28,16 @@ TsNode sUpdateNodeArr[] = {
         0x00u,
         0x00u,
         0x00u,
+        0x00u,
+        0x00u,
         McuUpdate_EarseFunc,
         McuUpdate_UpdateFunc,
         McuUpdate_CheckFunc
     },
     {
         NODE_ID_TCON,
+		0x00u,
+        0x00u,
         0x00u,
         0x00u,
         0x00u,
@@ -43,6 +47,8 @@ TsNode sUpdateNodeArr[] = {
     },
     {
         NODE_ID_SOURCE_IC,
+		0x00u,
+        0x00u,
         0x00u,
         0x00u,
         0x00u,
@@ -109,14 +115,14 @@ uint8_t NodeUpdate_EarseFunc(void)
   Function Descripttion        :     return node index,0xFF means not found
                                    
 ********************************************************************************/
-static uint8_t NodeUpdate_FindNodeById(uint8_t u8NodeId) 
+static uint8_t NodeUpdate_FindNodeById(uint16_t u16NodeId) 
 {
     uint8_t ret = 0xFFU;
     uint8_t count = sizeof(sUpdateNodeArr)/sizeof(TsNode);
 
     for (uint8_t i = 0; i < count; i++)
     {
-        if (u8NodeId == sUpdateNodeArr[i].u8NodeId)
+        if (u16NodeId == sUpdateNodeArr[i].u16NodeId)
         {
             ret = i;
             break;
@@ -132,7 +138,6 @@ static uint8_t NodeUpdate_FindNodeById(uint8_t u8NodeId)
   Function Descripttion        :     
                                    
 ********************************************************************************/
-uint8_t debugCnt = 0;
 static uint8_t NodeUpdate_GetBinPartData(uint8_t *des,uint16_t startAddr,uint16_t validLen,uint16_t * receivedLen,uint8_t * src,uint8_t frameAddr,uint32_t frameLen)
 {
     uint8_t ret;
@@ -180,13 +185,6 @@ static uint8_t NodeUpdate_GetBinPartData(uint8_t *des,uint16_t startAddr,uint16_
 ********************************************************************************/
 uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
 {
-    debugCnt ++;
-    if(debugCnt == 2)
-    {
-       __NOP(); 
-       __NOP(); 
-       __NOP(); 
-    }
 
     uint8_t ret = UPDATE_STS_SUCCESS;
     uint8_t u8Temp;
@@ -234,11 +232,21 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
             uint8_t u8NodeIdx;
             for (uint8_t i = 0; i < u32ValidBlockNum; i++)
             {
-                u8NodeIdx = NodeUpdate_FindNodeById(sHeadInfo.u8BlockIdentify[i * BLOCK_ID_LEN + BLOCK_ID_NODE_ID_IDX]);
+                uint8_t u8Offset;
+                uint16_t u16NodeId;
+                u8Offset = i * BLOCK_ID_LEN;
+                u16NodeId = (sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_NODE_ID_IDX] << 8) +\
+                            sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_NODE_ID_IDX + 1U];
+                u8NodeIdx = NodeUpdate_FindNodeById(u16NodeId);
                 if (u8NodeIdx != 0xFFu)
                 {
-                    __NOP();
-                    sUpdateNodeArr[u8NodeIdx].u8NodeUpdateFlag = sHeadInfo.u8BlockIdentify[i * BLOCK_ID_LEN + BLOCK_ID_UPDATE_FLAG_IDX];//todo 策略待完善
+                    sUpdateNodeArr[u8NodeIdx].u8NodeUpdateFlag = sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_UPDATE_FLAG_IDX];//todo 策略待完善
+                    sUpdateNodeArr[u8NodeIdx].u32PartationCrc = (sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_PART_CRC_IDX] << 24) + \
+                                                                (sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_PART_CRC_IDX + 1U] << 16) +\
+                                                                (sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_PART_CRC_IDX + 2u] << 8) +\
+                                                                sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_PART_CRC_IDX + 3U];
+                    sUpdateNodeArr[u8NodeIdx].u16NodeVersion =  (sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_VERSION_IDX] << 8) +\
+                                                                    sHeadInfo.u8BlockIdentify[u8Offset + BLOCK_ID_VERSION_IDX + 1U];
                     uint16_t u16PosInfoOffset= i * BLOCK_POS_INFO_LEN;
                     sUpdateNodeArr[u8NodeIdx].PartationStartAddr = (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 0] << 24) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 1] << 16) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 2] << 8) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 3]);
                     sUpdateNodeArr[u8NodeIdx].PartationLen = (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 4] << 24) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 5] << 16) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 6] << 8) + (sHeadInfo.u8BlockPosInfo[u16PosInfoOffset + 7]);
@@ -254,16 +262,8 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
     {
         uint32_t u32WriteAddr,u32WriteLen;
 
-        // if((addr < u16BlockDataStartAddr) && ((addr + len) >= u16BlockDataStartAddr))
-        // {
-        //     u32WriteAddr = u16BlockDataStartAddr;
-        //     u32WriteLen = (addr + len) - u16BlockDataStartAddr;
-        // }   
-        // else
-        // {
-            u32WriteAddr = addr;
-            u32WriteLen = len;
-        // }
+        u32WriteAddr = addr;
+        u32WriteLen = len;
         
         uint8_t count = sizeof(sUpdateNodeArr)/sizeof(TsNode);
         for (uint8_t i = 0; i < count; i++)
@@ -274,13 +274,9 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
                 if(u8Temp != OP_SUCCESS)
                 {
                     ret &= ~(1u << i); /* if op fail, clear flag bit */
-                    __NOP();
                 }
                 break;
             }
-            __NOP();
-            __NOP();
-            __NOP();
         }
     }
 
@@ -310,5 +306,23 @@ uint8_t NodeUpdate_CheckFunc(uint32_t u32HostCrc)  //todo  individual crc
     return ret;
 }
 
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+uint32_t NodeUpdate_GetBlockCrc(uint16_t NodeId)
+{
+    uint32_t u32BlockCrc = 0u;
+    uint8_t u8NodeIdx;
 
+    u8NodeIdx = NodeUpdate_FindNodeById(NodeId);
+    if (u8NodeIdx != 0xFFu)
+    {
+        u32BlockCrc = sUpdateNodeArr[u8NodeIdx].u32PartationCrc;
+    }
+    return u32BlockCrc;
+}
 #endif

@@ -49,8 +49,6 @@ uint8_t TconM_WriteByte(uint8_t page, uint8_t address, uint8_t data)
     if(true != I2cMasterApp_Tx(I2C_MASTER_SERCOM_4, TconM_u8TxBuf, 3U))
     {
         result = FALSE;
-        __NOP();
-        __NOP();
     }
     return result;
 }
@@ -70,14 +68,38 @@ uint8_t TconM_ReadByte(uint8_t page, uint8_t address, uint8_t* readValue)
     if(true != I2cMasterApp_Rx(I2C_MASTER_SERCOM_4, TconM_u8TxBuf, 2U, TconM_u8RxBuf, 1U))
     {
         result = FALSE;
-        __NOP();
-        __NOP();
     }
     else
     {
         (* readValue) = TconM_u8RxBuf[0];
     }
     return result;
+}
+
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     Check 0xFF03[0] = 1b'0 ? (Repeat this step until Trigger bit
+                                   
+********************************************************************************/
+static uint8_t TconM_CheckTriggerBit(void)
+{
+    uint8_t ret = FALSE;
+    uint8_t retry = 100U;
+    uint8_t data = 0xFFU;
+    while (retry > 0)
+    {
+        if ((TRUE == TconM_ReadByte(0xFFU, 0x03U, &data)) && ((data & 0x01U) == 0U))
+        {
+            ret = TRUE;
+            break;
+        }
+        retry--;
+        (void)FunApp_Delay_Millisecond(1U, MODE_ISR);
+    }
+
+    return ret;
 }
 /*******************************************************************************
   Function Name                :    
@@ -138,8 +160,11 @@ uint8_t TconM_ReleasePowerDown(void)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x07U);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
     return result;
 }
 
@@ -157,8 +182,11 @@ uint8_t TconM_PowerDown(void)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x07U);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
     return result;
 }
 
@@ -176,8 +204,11 @@ uint8_t TconM_ChipErase(void)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x07U);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
     return result;
 }
 /*******************************************************************************
@@ -204,8 +235,11 @@ uint8_t TconM_SectorErase(uint32_t u32SectorAddr)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x1FU);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
 
     return result;
 }
@@ -223,8 +257,11 @@ uint8_t TconM_WriteEnable(void)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x07U);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
     return result;
 }
 
@@ -240,7 +277,7 @@ uint8_t TconM_CheckStatus(uint8_t checkBit, uint8_t expectedValue)  //todo ä¸è¦
     uint8_t result = FALSE;
     uint8_t retry = 100U;
     uint8_t data;
-    while (TconM_ReadStatus(&data) && retry > 0)
+    while (TconM_ReadStatus(&data) && (retry > 0))
     {
         if ((data & checkBit) == expectedValue)
         {
@@ -248,13 +285,7 @@ uint8_t TconM_CheckStatus(uint8_t checkBit, uint8_t expectedValue)  //todo ä¸è¦
             break;
         }
         retry--;
-        (void)FunApp_Delay_Millisecond(10U, MODE_SYSTICK);
-    }
-    if(result == FALSE)
-    {
-        __NOP();
-        __NOP();
-        __NOP();
+        (void)FunApp_Delay_Millisecond(5U, MODE_ISR);
     }
     return result;
 }
@@ -275,9 +306,13 @@ uint8_t TconM_ReadStatus(uint8_t* returnByte)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x0FU);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x89U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    result &= TconM_ReadByte(0xFFU, 0x06U, returnByte);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+        result &= TconM_ReadByte(0xFFU, 0x06U, returnByte);
+    }
+    
     return result;
 }
 
@@ -297,8 +332,11 @@ uint8_t TconM_WriteStatus(uint8_t data)
     result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
     result &= TconM_WriteByte(0xFFU, 0x04U, 0x0FU);
     result &= TconM_WriteByte(0xFFU, 0x03U, 0x09U);
-    result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    result &= TconM_CheckTriggerBit();
+    if(TRUE == result)
+    {
+        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+    }
     return result;
 }
 
@@ -356,11 +394,6 @@ uint8_t TconM_ProgramData(uint8_t* binBuffer, uint32_t addr, uint32_t size)
     {
         result &= TconM_WriteEnable();           //                          AN Step 7-8
         result &= TconM_CheckStatus(0x02, 0x02); // Is write enable work     AN Step 7-8
-        if (result == FALSE)
-        {
-            __NOP();
-            __NOP();
-        }
 
 #if (BURST_MODE_EN != ENABLE_ON)
         result &= TconM_WriteByte(0xFF, 0x05, 0x02);
@@ -403,14 +436,14 @@ uint8_t TconM_ProgramData(uint8_t* binBuffer, uint32_t addr, uint32_t size)
         result &= TconM_WriteByte(0xFFU, 0x00U, 0xF0U);
         result &= TconM_WriteByte(0xFFU, 0x04U, packageBitlo);
         result &= TconM_WriteByte(0xFFU, 0x03U, packageBithi);
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
-        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+        result &= TconM_CheckTriggerBit();
+        if(TRUE == result)
+        {
+            result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+        }
         result &= TconM_CheckStatus(0xFFU, 0x00U);                      //    AN Step 7-10
         if (result == FALSE)
         {
-            __NOP();
-            __NOP();
             break;
         }
             
@@ -445,9 +478,11 @@ uint8_t TconM_Read(uint32_t addr, uint32_t size, uint8_t* buffer)
         uint16_t packageBitSize = (len + 4) * 8 - 1;
         result &= TconM_WriteByte(0xFFU, 0x04U, (uint8_t)((packageBitSize) & 0xFFU));
         result &= TconM_WriteByte(0xFFU, 0x03U, (uint8_t)(((packageBitSize >> 7) & 0x06U) | 0xA1U)); // SPI_Len[8:9]
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
-        result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+        result &= TconM_CheckTriggerBit();
+        if(TRUE == result)
+        {
+            result &= TconM_WriteByte(0xFFU, 0x00U, 0xF1U);
+        }
         uint8_t startAddr = 0x09U;
 #if (BURST_MODE_EN != ENABLE_ON)
         for (uint16_t i = 0; i < len; i++)

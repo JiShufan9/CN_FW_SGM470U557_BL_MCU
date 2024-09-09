@@ -144,7 +144,6 @@ uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, uint8_t write_size,
     {
         (void)SourceIcSpiIf_retry_delay();
         (void)PinIOApp_High(PORT_C,BIT9);
-        __NOP();
     }
     else
     {
@@ -153,7 +152,6 @@ uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, uint8_t write_size,
         (void)PinIOApp_High(PORT_C,BIT9);
 #endif
         (void)memcpy(read_buf,&u8TempRxBuf[write_size],read_size);
-        __NOP();
     }
 
     return result;

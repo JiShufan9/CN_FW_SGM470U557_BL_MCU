@@ -20,6 +20,7 @@
 #include "app/inc/SourceIcM.h"
 #include "app/inc/CrcApp.h"
 #include "app/inc/FunApp.h"
+#include "app/NodesInterface/NodeUpdate.h"
 /* ************************************************************************** */
 /* Section: Global Variable                                                   */
 /* ************************************************************************** */
@@ -59,12 +60,8 @@ uint8_t SourceIcExtFlashUpdate_EarseFunc(void)
 {
     uint8_t ret;
     
-    // if(SourceIcM_EnterExtFlsBypassMode(SOURCE_IC_IDX_MASTER) == OP_SUCCESS)
-    // { 
-    
-
-        
-        (void)SourceIcM_EnterExtFlsBypassMode(SOURCE_IC_IDX_MASTER);
+    if(TRUE == SourceIcM_EnterExtFlsBypassMode(SOURCE_IC_IDX_MASTER))
+    { 
         (void)FunApp_Delay_Millisecond(10U, MODE_SYSTICK);
         (void)sfud_init();
         (void)fal_init();
@@ -76,22 +73,153 @@ uint8_t SourceIcExtFlashUpdate_EarseFunc(void)
         else
         {
              ret = OP_ERR;
-             __NOP();
-             __NOP();
         }
             
-    // }
-    // else
-    // {
-    //     ret = OP_ERR;
-    //     __NOP();
-    //     __NOP();
-    // }
+    }
+    else
+    {
+        ret = OP_ERR;
+    }
 
     return ret;
 }
 
 
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+#define     SourceIcExtFlashUpdate_Clipping(ClippingStartAddr,ClippingLen,OpSection1,OpSection2)\
+if(ClippingStartAddr < startAddr)\
+{\
+    u32IteratorStart = startAddr;\
+}\
+else\
+{\
+    u32IteratorStart = ClippingStartAddr;\
+}\
+if((startAddr + validLen) < (ClippingStartAddr + ClippingLen))\
+{\
+    u32IteratorEnd = startAddr + validLen;\
+}\
+else\
+{\
+    u32IteratorEnd = ClippingStartAddr + ClippingLen;\
+}\
+if(u32IteratorStart <= u32IteratorEnd)\
+{\
+    if(startAddr < ClippingStartAddr)\
+    {\
+        uint32_t u32TempLen = (ClippingStartAddr - startAddr);\
+        OpSection1(ClippingStartAddr,ClippingLen,OpSection1,OpSection2)\
+    }\
+    if((ClippingStartAddr + ClippingLen) < (startAddr + validLen))\
+    {\
+        uint32_t u32TempLen = (startAddr + validLen) - (ClippingStartAddr + ClippingLen);\
+        OpSection2(ClippingStartAddr,ClippingLen,OpSection1,OpSection2)\
+    }\
+}
+
+#define WriteDataOpSection1(ClippingStartAddr,ClippingLen,OpSection1,OpSection2) \
+    do{\
+		if(fal_partition_write(psSourceIcConfPart, startAddr,  buf,  u32TempLen) < 0)\
+		{\
+			ret &= FALSE;\
+		}\
+    }while(0);
+
+#define WriteDataOpSection2(ClippingStartAddr,ClippingLen,OpSection1,OpSection2) \
+    do{\
+		if(fal_partition_write(psSourceIcConfPart, (ClippingStartAddr + ClippingLen),  (buf + validLen - u32TempLen),  u32TempLen) < 0)\
+		{\
+			ret &= FALSE;\
+		}\
+    }while(0);
+
+#define CmpDataOpSection1(ClippingStartAddr,ClippingLen,OpSection1,OpSection2) \
+    do{\
+        if(memcmp(buf1,buf2,u32TempLen) != 0)\
+        {\
+            ret &= FALSE;\
+        }\
+    }while(0);
+
+#define CmpDataOpSection2(ClippingStartAddr,ClippingLen,OpSection1,OpSection2) \
+    do{\
+        if(memcmp((buf1 + validLen - u32TempLen ),(buf2 + validLen - u32TempLen) ,u32TempLen) != 0)\
+        {\
+            ret &= FALSE;\
+        }\
+    }while(0);
+
+static uint8_t SourceIcExtFlashUpdate_WirteData(uint32_t addr,uint32_t len,uint8_t * buf)
+{
+    uint8_t ret = TRUE;
+#if NOT_CHANGE_WPC_DATA_EN
+    /* do not change WPC data --- START */
+    uint32_t u32IteratorStart;
+    uint32_t u32IteratorEnd;
+    uint32_t startAddr;
+    uint32_t validLen;
+
+    startAddr = addr;
+    validLen = len;
+
+    SourceIcExtFlashUpdate_Clipping(WPC_DATA_START_ADDR, WPC_DATA_LEN,WriteDataOpSection1,WriteDataOpSection2)
+    else
+    {
+#endif
+        if(fal_partition_write(psSourceIcConfPart, addr,  buf,  len) < 0)
+        {
+            ret &= FALSE;
+        }
+#if NOT_CHANGE_WPC_DATA_EN
+        
+    }
+#endif
+    /* do not change WPC data --- END */
+    return ret;
+}
+
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+static uint8_t SourceIcExtFlashUpdate_CmpData(uint8_t* buf1,uint8_t * buf2, uint32_t addr ,uint32_t len)
+{
+    uint8_t ret = TRUE;
+#if NOT_CHANGE_WPC_DATA_EN
+    uint32_t u32IteratorStart;
+    uint32_t u32IteratorEnd;
+    uint32_t startAddr;
+    uint32_t validLen;
+
+    startAddr = addr;
+    validLen = len;
+
+    SourceIcExtFlashUpdate_Clipping(WPC_DATA_START_ADDR, WPC_DATA_LEN, CmpDataOpSection1, CmpDataOpSection2)
+    else
+    {
+#endif
+            if(memcmp(buf1,buf2,len) != 0)
+            {
+                ret &= FALSE;
+            }
+           
+#if NOT_CHANGE_WPC_DATA_EN
+        
+    }
+#endif
+    
+
+    return ret;
+}
 /*******************************************************************************
   Function Name                :    
   Parameters                   :    
@@ -106,9 +234,14 @@ static uint8_t SourceIcExtFlashUpdate_CheckEarseBlock(uint32_t addr,uint32_t len
     {
         ret = OP_SUCCESS;
     }
+#if NOT_CHANGE_WPC_DATA_EN
+	else if((addr >= WPC_DATA_START_ADDR) && (addr <= (WPC_DATA_START_ADDR + WPC_DATA_LEN)))
+	{
+        ret = OP_SUCCESS;
+    }
+#endif
     else if(fal_partition_erase(psSourceIcConfPart, addr, len) < 0)
     {
-        __NOP();
         ret = OP_ERR;
     }
     else
@@ -116,10 +249,9 @@ static uint8_t SourceIcExtFlashUpdate_CheckEarseBlock(uint32_t addr,uint32_t len
         ret = OP_SUCCESS;
     }
     
+    
     return ret;
 }
-
-
 /*******************************************************************************
   Function Name                :    
   Parameters                   :    
@@ -129,7 +261,7 @@ static uint8_t SourceIcExtFlashUpdate_CheckEarseBlock(uint32_t addr,uint32_t len
 ********************************************************************************/
 uint8_t SourceIcExtFlashUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
 {
-    uint8_t ret = OP_ERR;
+    uint8_t ret = OP_SUCCESS;
 
     if((addr + len) <= SIZE_SOURCE_IC_FW)
     {
@@ -137,28 +269,41 @@ uint8_t SourceIcExtFlashUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * b
 
         if (SourceIcExtFlashUpdate_CheckEarseBlock(addr,len) != OP_SUCCESS)
         {
-            __NOP();
             ret = OP_ERR;
         }
-        else if(fal_partition_write(psSourceIcConfPart, addr,  buf,  len) < 0)
+        else if(TRUE != SourceIcExtFlashUpdate_WirteData(addr,len,buf))
         {
-            __NOP();
             ret = OP_ERR;
+            __NOP();
         }
 #if (SRC_IC_UPDATE_READ_BACK_CHECK_FUNC == ENABLE_ON)
         else if(fal_partition_read(psSourceIcConfPart, addr,  u8ReadBackBuf,  len) < 0)
         {
             ret = OP_ERR;
+            __NOP();
         }
-        else if(memcmp(buf,u8ReadBackBuf,len) != 0)
+        else if(TRUE != SourceIcExtFlashUpdate_CmpData(buf,u8ReadBackBuf,addr,len))
         {
             ret = OP_ERR;
+            __NOP();
         }
 #endif
         else
         {
             u32LocalCrc = CrcApp_Crc32_Calculation(buf, len, u32LocalCrc);
-            ret = OP_SUCCESS;
+            if((addr + len) == SIZE_SOURCE_IC_FW)
+            {
+                u32LocalCrc = (~u32LocalCrc);
+                if(u32LocalCrc != NodeUpdate_GetBlockCrc(NODE_ID_SOURCE_IC))
+                {
+                    ret = OP_ERR;
+                    __NOP();
+                }
+            }
+            else
+            {
+                ret = OP_SUCCESS;
+            }
         }
     }
     return ret;

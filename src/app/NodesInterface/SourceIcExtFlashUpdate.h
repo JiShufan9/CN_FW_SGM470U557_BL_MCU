@@ -22,13 +22,15 @@
 /* ************************************************************************** */
 /* Section: Macro Definition                                                  */
 /* ************************************************************************** */
-
+#define NOT_CHANGE_WPC_DATA_EN      TRUE
 #define SRC_IC_UPDATE_READ_BACK_CHECK_FUNC  ENABLE_ON
 
 #define SIZE_SOURCE_IC_FW    (256U * 1024U)
 #define SOURCE_IC_EXT_FLS_BLOCK_SIZE  4096U
 #define SRC_EXT_FLS_READ_BACK_BUF_LEN      64U
 
+#define WPC_DATA_START_ADDR      0x3E000U
+#define WPC_DATA_LEN       (0x3FFFFU - WPC_DATA_START_ADDR + 1U)
 /* ************************************************************************** */
 /* Section: Enum                                                              */
 /* ************************************************************************** */

@@ -42,8 +42,10 @@
 #define NODE_UPDATE_MAX_BLOCK_NUM  3U
 
 
-#define BLOCK_ID_NODE_ID_IDX    11u    
-#define BLOCK_ID_UPDATE_FLAG_IDX    1u
+#define BLOCK_ID_UPDATE_FLAG_IDX    0u
+#define BLOCK_ID_PART_CRC_IDX   4u
+#define BLOCK_ID_VERSION_IDX    8u
+#define BLOCK_ID_NODE_ID_IDX    10u 
 /* ************************************************************************** */
 /* Section: Enum                                                              */
 /* ************************************************************************** */
@@ -58,8 +60,10 @@ typedef uint8_t (* TpCheckFunc)(uint32_t);
 
 typedef struct
 {
-    const uint8_t u8NodeId;
+    const uint16_t u16NodeId;
+    uint16_t u16NodeVersion;
     uint8_t u8NodeUpdateFlag;
+    uint32_t u32PartationCrc;
     uint32_t PartationStartAddr;
     uint32_t PartationLen;
     TpEarseFunc pEarseFunc;
@@ -88,6 +92,7 @@ typedef struct NodeUpdate
 /* ************************************************************************** */
 uint8_t NodeUpdate_EarseFunc(void);
 uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf);
+uint32_t NodeUpdate_GetBlockCrc(uint16_t NodeId);
 
 #endif
 #endif

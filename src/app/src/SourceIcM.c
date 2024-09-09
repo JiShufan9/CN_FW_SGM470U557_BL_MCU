@@ -86,8 +86,6 @@ static uint8_t SourceIcM_ProcessCmd(TuSourceIcCmd * cmd)
     if((ret == TRUE) && (cmd -> _s.WRFlag == FLAG_R))
     {
         (void)memcpy(cmd -> _s.u8Buf,u8TempReadBuf,cmd -> _s.u8DataLen);
-        __NOP();
-        __NOP();
     }
 
     return ret;
