@@ -24,6 +24,7 @@
 #include "app/inc/AdcApp.h"
 #include "app/inc/WatchDogApp.h"
 #include "hal/inc/FmcDriver.h"
+#include "app/NodesInterface/NodeUpdate.h"
 /*---------------------------- Declare External Var -------------------------*/
 static st_ring_buffer tsI2cSlaveRx;
 static st_queue tsI2cSlaveTx;
@@ -354,6 +355,7 @@ static void I2c0SlaveApp_TASK_Cmd_Check(uint8_t u8Cmd)
 
 }
 
+#if MCU_UPDATE_ONLY
 /******************************************************************************
 ;       Function Name           :   static bool I2c0SlaveApp_Flash_Page_Write_Check(uint8_t u8Status)
 ;       Function Description    :   Check the flash write status in the UPDATE state.
@@ -384,6 +386,7 @@ static bool I2c0SlaveApp_Flash_Page_Write_Check(uint8_t u8Status)
     (void)(u8Status);
     return true;
 }
+#endif
 
 /******************************************************************************
 ;       Function Name           :   uint8_t I2c0SlaveApp_Slave_Rx_Compare(uint32_t u32StartAddr, uint32_t u32CompareSize, uint8_t *u8SrcBuff)
@@ -435,7 +438,10 @@ uint8_t I2c0SlaveApp_Slave_Rx_Compare(uint32_t u32StartAddr, uint32_t u32Compare
 ******************************************************************************/
 static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16_t u16Key1)
 {
-    uint32_t u32Index, u32FlashWriteAddr;
+#if MCU_UPDATE_ONLY
+    uint32_t u32Index;
+#endif
+    uint32_t u32FlashWriteAddr;
     
     switch(u8Cmd)
     {
@@ -451,6 +457,7 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
             {
                 u8BootloaderStatus1Flag &= ~SET_SESSION_KEY_ERR;
                 #if FLASH_WRITE
+#if MCU_UPDATE_ONLY
                 #if AUTO_MATCH_ADDRESS
                     u32FlashWriteAddr = (uint32_t)((uint32_t)ADDR_APP_START+(uint32_t)((uint32_t)gu16PageCounter*(uint32_t)SIZE_64B));
                     if(u32FlashWriteAddr < (uint32_t)(ADDR_APP_START + SIZE_APP_BASE))
@@ -458,6 +465,15 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                     u32FlashWriteAddr = ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_2]) << (uint32_t)(SHIFT_BIT_16)) | ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_1]) << (uint32_t)(SHIFT_BIT_8)) | (uint32_t)(gu8FlashWriteCmd[PU_ADDR_0]);
                     if((u32FlashWriteAddr >= (uint32_t)(ADDR_APP_START)) && (u32FlashWriteAddr < (uint32_t)(ADDR_APP_START + SIZE_APP_BASE)))
                 #endif
+#else
+                #if AUTO_MATCH_ADDRESS
+                    u32FlashWriteAddr = (uint32_t)((uint32_t)ADDR_START+(uint32_t)((uint32_t)gu16PageCounter*(uint32_t)SIZE_64B));
+                    if(u32FlashWriteAddr < (uint32_t)(ADDR_START + SIZE_TOTAL_BASE))
+                #else
+                    u32FlashWriteAddr = ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_2]) << (uint32_t)(SHIFT_BIT_16)) | ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_1]) << (uint32_t)(SHIFT_BIT_8)) | (uint32_t)(gu8FlashWriteCmd[PU_ADDR_0]);
+                    if((u32FlashWriteAddr >= (uint32_t)(ADDR_START)) && (u32FlashWriteAddr < (uint32_t)(ADDR_START + SIZE_TOTAL_BASE)))
+                #endif
+#endif
                     {
                         #if DEBUG_UART
                             if(u32FlashWriteAddr == (uint32_t)(ADDR_APP_START))
@@ -465,10 +481,35 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                                 Uart1App_String_Show("MCU is WRITING...\r");
                             }                           
                         #endif
+#if MCU_UPDATE_ONLY
                         (void)I2c0SlaveApp_Flash_Page_Write_Check(FlashRwApp_64B_Page_Write(u32FlashWriteAddr, &gu8FlashWriteCmd[PU_DATA]));        
-                        #if AUTO_MATCH_ADDRESS
-                            gu16PageCounter += 1U;
-                        #endif
+#else
+                        if(NodeUpdate_UpdateFunc(u32FlashWriteAddr,SIZE_64B,&gu8FlashWriteCmd[PU_DATA]) == UPDATE_STS_SUCCESS)
+                        {
+                            /* Flash write is success */
+                            u8BootloaderStatus1Flag |= SET_FLASH_WRITE_SUCCESS;     /* Flash write successful */
+                            u8BootloaderStatus2Flag &= ~SET_PROGRAMMING_ERROR;      /* Programming pass */
+                            (void)I2c0SlaveApp_Irq_Control(SET_IRQ_ASSERT);
+                            #if DEBUG_UART
+                                //Uart1App_String_Show("Flash write SUCCESS\r");
+                            #endif
+                            #if AUTO_MATCH_ADDRESS
+                                gu16PageCounter += 1U;
+                            #endif
+                        }
+                        else
+                        {
+                            
+                            /* Flash write is failure */
+                            u8BootloaderStatus1Flag &= ~SET_FLASH_WRITE_SUCCESS;    /* Flash is written error */
+                            u8BootloaderStatus2Flag |= SET_PROGRAMMING_ERROR;       /* Programming error */
+                            (void)I2c0SlaveApp_Irq_Control(SET_IRQ_ASSERT);
+                            #if DEBUG_UART
+                                //Uart1App_String_Show("Flash write ERROR\r");
+                            #endif
+                        }
+
+#endif
                     }
                     else
                     {
@@ -523,6 +564,7 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                     ) 
                 #endif
                     {
+#if MCU_UPDATE_ONLY
                         for(u32Index=0U; u32Index<LEN_ERASE; u32Index++)
                         {
                             #if FLASH_ERASE
@@ -531,13 +573,29 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                         }
                         
                         (void)FunApp_Delay_Millisecond(50U, MODE_SYSTICK);                 /* Delaly 500ms, waiting for the MCU erase finish */
-                        u8BootloaderStatus1Flag |= (uint8_t)(SET_APP_ERASE);            /* APP memory is erased finish */
-                        u8BootloaderStatus1Flag &= (uint8_t)(~SET_CRC16_ERR);
-                        u8BootloaderStatus1Flag &= ~SET_SESSION_KEY_ERR;
-                        (void)I2c0SlaveApp_Irq_Control(SET_IRQ_ASSERT);
-                        #if DEBUG_UART
-                            Uart1App_String_Show("Flash ERASED\r");
-                        #endif
+#else
+                        if(NodeUpdate_EarseFunc() == UPDATE_STS_SUCCESS)
+                        {
+                            u8BootloaderStatus1Flag |= (uint8_t)(SET_APP_ERASE);            /* APP memory is erased finish */
+                            u8BootloaderStatus1Flag &= (uint8_t)(~SET_CRC16_ERR);
+                            u8BootloaderStatus1Flag &= ~SET_SESSION_KEY_ERR;
+                            (void)I2c0SlaveApp_Irq_Control(SET_IRQ_ASSERT);
+                            #if DEBUG_UART
+                                Uart1App_String_Show("Flash ERASED\r");
+                            #endif
+                        }
+                        else
+                        {
+                            u8BootloaderStatus1Flag &= (uint8_t)(~SET_APP_ERASE);           /* APP memory has not erase */
+                            u8BootloaderStatus1Flag |= SET_SESSION_KEY_ERR;
+                            (void)I2c0SlaveApp_Irq_Control(SET_IRQ_ASSERT);
+                            #if DEBUG_UART
+                            Uart1App_String_Show("CMD_APP_MEM_ERASE ERROR\r");
+                            #endif
+                        }
+#endif
+
+                        
                     } else {
                         u8BootloaderStatus1Flag &= (uint8_t)(~SET_APP_ERASE);           /* APP memory has not erase */
                         u8BootloaderStatus1Flag |= SET_SESSION_KEY_ERR;
@@ -925,7 +983,7 @@ static uint8_t I2cSlaveApp_Write_Cmd_Parser(st_ring_buffer *ptdRingBuffer)
 
         case CMD_APP_MEM_UNLOCK:
             (void)slave_i2c_ringbuffer_pull(ptdRingBuffer, gu8MemUnlockCmd, (uint16_t)CMD_MEM_UNLOCK_MAX);
-
+            //todo  为什么这里没设置rx ready flag,txb背光时周期的，凑巧就可以切到BL_UPDATE状态
             u8Return = TRUE;
         break;
 

@@ -230,7 +230,7 @@ bool i2c_nvic_enable(en_i2c_channel eCh)
     }
     else if(SERCOM_CH4 == eCh)
     {
-        NVIC_SetPriority(SERCOM4_IRQn, 3U);
+        NVIC_SetPriority(SERCOM4_IRQn, 2U); /* set tcon master i2c higher than slave i2c to update tcon fw in slave int*/
         NVIC_EnableIRQ(SERCOM4_IRQn);
         bReturn = true;
     }

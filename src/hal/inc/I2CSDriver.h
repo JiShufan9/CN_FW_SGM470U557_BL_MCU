@@ -35,8 +35,8 @@
 extern "C" {
 #endif
 
-#define I2CS_READ       true
-#define I2CS_WRITE      false
+#define I2CS_READ       TRUE
+#define I2CS_WRITE      FALSE
 #define I2CS_400KHz     0x00000000UL
 #define I2CS_1MHz       0x01000000UL
 #define I2CS_3_4MHz     0x02000000UL

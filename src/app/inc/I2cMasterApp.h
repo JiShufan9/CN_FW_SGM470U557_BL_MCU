@@ -16,15 +16,18 @@ extern "C" {
 #include "hal/inc/I2CMDriver.h"
 /* Marco Define */
 #define I2CMASTERAPP_TIMEOUT_COUNTER	11154U/*3ms*/
-#define I2CMASTERAPP_ENABLE_TX  true
-#define I2CMASTERAPP_ENABLE_RX  false
-#define ADDR_TCON 0x52U
+#define I2CMASTERAPP_ENABLE_TX      TRUE
+#define I2CMASTERAPP_ENABLE_RX      TRUE
+
+#define COM4_INSERT_FRAME_GAP   FALSE
+#define COM4_INSERT_FRAME_GAP_CNT       1000u
+
+#define ADDR_TCON 0x37U
 #define LED_DRIVER_ADDRESS              0x38U
 
 typedef enum I2CMasterSercomType
 {
-    I2C_MASTER_SERCOM_3 = 0U,
-    I2C_MASTER_SERCOM_2,
+    I2C_MASTER_SERCOM_4 = 0U,
     I2C_MASTER_SERCOM_5
 }I2CMasterSercom;
 

@@ -416,6 +416,7 @@ bool SERCOM_I2CM_IsBusy(uint8_t u8Ch)
     return bReturn;
 }
 
+#if 0
 static void SERCOM_I2CM_TCON_StatusCheck(void)
 {
     en_i2c_channel u8Ch = 3U;
@@ -613,6 +614,7 @@ void SERCOM_I2CM_TCON_Handler(void)
         {/* Nothing */}
     }
 }
+#endif
 
 static void SERCOM_I2CM_StatusCheck(sercom_registers_t *ptReg, uint8_t u8Ch)
 {

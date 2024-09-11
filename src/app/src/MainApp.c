@@ -36,6 +36,7 @@ uint8_t MainApp_getDisplayID(void)
 	return (uint8_t)(gDisplayID);
 }
 
+#if 0
 void mainApp_SetBacklightDimmingType(void)
 {
 	uint8_t u8DimmingSetting = 0U;
@@ -59,11 +60,12 @@ void mainApp_SetBacklightDimmingType(void)
 	}
 	tsTconProtocal.u8TxLen = 3U;
 	/* Send I2C CMD to TCON */
-	(void)I2cMasterApp_Tx(I2C_MASTER_SERCOM_3, &tsTconProtocal.u8TconTxBuf[0U], tsTconProtocal.u8TxLen);
+	(void)I2cMasterApp_Tx(I2C_MASTER_SERCOM_4, &tsTconProtocal.u8TconTxBuf[0U], tsTconProtocal.u8TxLen);
 
 	(void)u8Idx;
 	(void)u8DimmingSetting;
 }
+#endif
 /******************************************************************************
 ;Author: Orlando Huang
 ;Description: Controlinf backlight from different project type

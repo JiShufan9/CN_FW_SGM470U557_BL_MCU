@@ -64,8 +64,8 @@ typedef struct{
 #define	FAST_MODE_PLUS 1U 	/* up to 1MHz */
 #define	HIGH_SPEED_MODE 2U 	/* up to 3U_(2).4MHz */
 
-#define I2CMDRIVER_ENABLE_WRITEREAD	false
-#define I2CMDRIVER_ENABLE_READ	false
+#define I2CMDRIVER_ENABLE_WRITEREAD 	TRUE
+#define I2CMDRIVER_ENABLE_READ	FALSE
 
 typedef struct{
 	/* Device address */
