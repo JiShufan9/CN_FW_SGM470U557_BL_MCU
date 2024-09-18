@@ -488,7 +488,7 @@ bool AdcApp_AdcDebounceFlag_Set(bool bSwitch)
 ******************************************************************************/
 uint8_t AdcApp_HW_Version_Transfer(void)
 {
-	gu16AdcToHWVersion = PortDrvier_PinRead(IO_PCBA_A0) + (PortDrvier_PinRead(IO_PCBA_A1) << 8) + (PortDrvier_PinRead(IO_PCBA_A2) << 16) + (PortDrvier_PinRead(IO_PCBA_A3) << 24);
+	gu16AdcToHWVersion = ((PortDrvier_PinRead(IO_PCBA_A3) << 3U) | (PortDrvier_PinRead(IO_PCBA_A2) << 2U) | (PortDrvier_PinRead(IO_PCBA_A1) << 1U) | PortDrvier_PinRead(IO_PCBA_A0));
 	#if (DEBUG_UART)
 		Uart1App_String_Value_Show("HW version = V", gu8AdcToHWVersion, (uint8_t)(SHOW_DEC));
 	#endif	
