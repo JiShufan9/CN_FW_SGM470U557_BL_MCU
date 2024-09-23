@@ -106,16 +106,15 @@ static uint8_t SourceIcSpiIf_retry_delay(void) {
                                    
 ********************************************************************************/
 // LDRA_EXCLUDE_START 139 S
-uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, uint8_t write_size, uint8_t *read_buf,uint8_t read_size) 
+uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, size_t write_size, uint8_t *read_buf,size_t read_size) 
 {
     uint8_t result = TRUE;
     uint32_t retry_times;
     bool bTemp;
-    uint8_t u8TempRxBuf[70U] = {0U}; /* max len is 70 */
 
     (void)PinIOApp_Low(PORT_C,BIT9);
     (void)SourceIcSpiIf_retry_delay();
-    (void)SERCOM6_SPI_WriteRead ((void *)write_buf, write_size, u8TempRxBuf, ((size_t)write_size + (size_t)read_size));
+    (void)SERCOM6_SPI_WriteRead ((void *)write_buf, write_size, read_buf, read_size);
 
     retry_times = 0xFFFFFFFFu;
     bTemp = SERCOM6_SPI_IsBusy();
@@ -151,7 +150,6 @@ uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, uint8_t write_size,
         (void)SourceIcSpiIf_retry_delay();
         (void)PinIOApp_High(PORT_C,BIT9);
 #endif
-        (void)memcpy(read_buf,&u8TempRxBuf[write_size],read_size);
     }
 
     return result;

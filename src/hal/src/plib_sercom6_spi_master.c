@@ -411,9 +411,9 @@ bool SERCOM6_SPI_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveDa
 
                 txSz = sercom6SPIObj.txSize;
 
-                if(sercom6SPIObj.rxSize > txSz)
+                if(sercom6SPIObj.rxSize > 0u)
                 {
-                    sercom6SPIObj.dummySize = sercom6SPIObj.rxSize - txSz;
+                    sercom6SPIObj.dummySize = sercom6SPIObj.rxSize;
                 }
 
                 /* Start the first write here itself, rest will happen in ISR context */
@@ -532,7 +532,7 @@ void SERCOM6_SPI_InterruptHandler(void)
         {
             receivedData =  SERCOM6_REGS->SPIM.SERCOM_DATA;
 
-            if(rxCount < sercom6SPIObj.rxSize)
+            if((rxCount < sercom6SPIObj.rxSize) && (sercom6SPIObj.dummySize <= (sercom6SPIObj.rxSize - 1U)))
             {
                 if(dataBits == (uint32_t)SPI_DATA_BITS_8)
                 {

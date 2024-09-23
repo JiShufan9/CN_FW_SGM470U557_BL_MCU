@@ -110,7 +110,7 @@ typedef union
 /* ************************************************************************** */
 void SourceIcSpiIf_Init(void);
 // void SourceIcSpiIf_MainFunction(void);
-uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, uint8_t write_size, uint8_t *read_buf,uint8_t read_size);
+uint8_t SourceIcSpiIf_SpiWriteRead(const uint8_t *write_buf, size_t write_size, uint8_t *read_buf,size_t read_size);
 uint8_t SourceIcSpiIf_BypassOp(uint8_t txBuf[],uint8_t u8TxLen,uint8_t rxBuf[],uint8_t u8RxLen);
 
 #endif
