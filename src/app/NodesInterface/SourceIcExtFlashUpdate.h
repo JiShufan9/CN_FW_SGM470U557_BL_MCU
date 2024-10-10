@@ -22,6 +22,10 @@
 /* ************************************************************************** */
 /* Section: Macro Definition                                                  */
 /* ************************************************************************** */
+#define CHIP_EARSE      1u
+#define SECTOR_EARSE    2u
+#define SRC_IC_EARSE_TYPE   CHIP_EARSE
+
 #define NOT_CHANGE_WPC_DATA_EN      TRUE
 #define SRC_IC_UPDATE_READ_BACK_CHECK_FUNC  ENABLE_ON
 
@@ -30,7 +34,7 @@
 #define SRC_EXT_FLS_READ_BACK_BUF_LEN      64U
 
 #define WPC_DATA_START_ADDR      0x3E000U
-#define WPC_DATA_LEN       (0x3FFFFU - WPC_DATA_START_ADDR + 1U)
+#define WPC_DATA_LEN       (0x3EFFFU - WPC_DATA_START_ADDR + 1U)
 /* ************************************************************************** */
 /* Section: Enum                                                              */
 /* ************************************************************************** */

@@ -27,7 +27,7 @@ struct fal_flash_dev nor_flash0 =
 {
     .name       = FAL_USING_NOR_FLASH_DEV_NAME,
     .addr       = 0,
-    .len        = 2 * 1024 * 1024,
+    .len        = 256 * 1024,
     .blk_size   = 4096,
     .ops        = {SfudIf_init, SfudIf_read, SfudIf_write, SfudIf_erase},
     .write_gran = 1

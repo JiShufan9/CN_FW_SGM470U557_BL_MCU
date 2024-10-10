@@ -26,7 +26,6 @@ TuSourceIcCmd SourceIcCmdArr[2] = {0U};
 /* Section: Static Functions Declaration                                      */
 /* ************************************************************************** */
 static uint8_t SourceIcM_ProcessCmd(TuSourceIcCmd * cmd);
-//static uint8_t SourceIcM_ReadDtc(uint8_t result[]);
 /* ************************************************************************** */
 /* Section: Functions Definition                                              */
 /* ************************************************************************** */
@@ -104,16 +103,26 @@ static void SourceIcM_SetCmd(uint8_t CmdIdx,uint8_t idx,uint8_t addr,uint8_t WrF
     SourceIcCmdArr[CmdIdx]._s.WRFlag = WrFlag;
     SourceIcCmdArr[CmdIdx]._s.u8DataLen = dataLen;
     (void)memset(SourceIcCmdArr[CmdIdx]._s.u8Buf, 0U, SOURCE_IC_CMD_BUF_MAX);
-    if(idx == 0U)
-    {
-        SourceIcCmdArr[CmdIdx]._s.DesId = DESID_PRIMARY;
-    }
-    else
-    {
-        SourceIcCmdArr[CmdIdx]._s.DesId = DESID_SECONDARY;
-    }
+    SourceIcCmdArr[CmdIdx]._s.DesId = idx;
 }
 
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+static uint8_t SourceIcM_Read(uint8_t idx,uint8_t addr,uint8_t value)
+{
+    uint8_t ret;
+
+    SourceIcM_SetCmd(0U, idx, addr, FLAG_R, 1u);
+    ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[0]);
+    (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);
+    
+    return ret;
+}
 /*******************************************************************************
   Function Name                :    
   Parameters                   :    
@@ -128,7 +137,7 @@ static uint8_t SourceIcM_Write(uint8_t idx,uint8_t addr,uint8_t value)
     SourceIcM_SetCmd(1U, idx, addr, FLAG_W, 1u);
     SourceIcCmdArr[1]._s.u8Buf[0] = value;
     ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[1]);
-    (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+    (void)FunApp_Delay_Millisecond(1U, MODE_SYSTICK);
     
     return ret;
 }
@@ -144,15 +153,10 @@ static uint8_t SourceIcM_WriteAndCheck(uint8_t idx,uint8_t addr,uint8_t value)
 {
     uint8_t ret;
 
-    SourceIcM_SetCmd(1U, idx, addr, FLAG_W, 1u);
-    SourceIcCmdArr[1]._s.u8Buf[0] = value;
-    ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[1]);
+    ret = SourceIcM_Write( idx, addr, value);
     if((ret == TRUE))
     {
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
-        SourceIcM_SetCmd(0U, idx, addr, FLAG_R, 1u);
-        ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[0]);
-        (void)FunApp_Delay_Millisecond(3U, MODE_SYSTICK);
+        ret = SourceIcM_Read(idx, addr, value);
         if((ret == TRUE) && (SourceIcCmdArr[0]._s.u8Buf[0] != value))
         {
             ret = FALSE;
@@ -239,6 +243,7 @@ uint8_t SourceIcM_ReadVersionInfo(uint8_t idx,uint8_t *result)
   Function Descripttion        :     
                                    
 ********************************************************************************/
+#if 0
 uint8_t SourceIcM_ReadDtc(uint8_t idx,uint8_t *result)
 {
     uint8_t ret;
@@ -260,6 +265,61 @@ uint8_t SourceIcM_ReadDtc(uint8_t idx,uint8_t *result)
 
     return ret;
 }
+#endif
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+#if 1
+uint8_t SourceIcM_WriteReg(uint8_t idx,uint8_t page,uint8_t addr,uint8_t value)
+{
+    uint8_t ret;
+    ret = SourceIcM_PageSelect(idx,page);
+    if(ret == FALSE)
+    {
+        /* nothing */
+    }
+    else
+    {
+        ret = SourceIcM_WriteAndCheck(idx, addr, value);
+    }
+
+    return ret;
+}
+#endif
+/*******************************************************************************
+  Function Name                :    
+  Parameters                   :    
+  Return Values                :    
+  Function Descripttion        :     
+                                   
+********************************************************************************/
+#if 0
+uint8_t SourceIcM_ReadReg(uint8_t idx,uint8_t page,uint8_t addr,uint8_t *result,uint8_t len)
+{
+    uint8_t ret;
+    ret = SourceIcM_PageSelect(idx,page);
+    if(ret == FALSE)
+    {
+        /* nothing */
+    }
+    else
+    {
+        SourceIcM_SetCmd(0U, idx, addr, FLAG_R, len);
+
+        ret = SourceIcM_ProcessCmd(&SourceIcCmdArr[0]);
+        if((ret == TRUE))
+        {
+            (void)memcpy(result, SourceIcCmdArr[0]._s.u8Buf, len);
+        }
+    }
+
+    return ret;
+}
+#endif
 /*******************************************************************************
   Function Name                :    
   Parameters                   :    
