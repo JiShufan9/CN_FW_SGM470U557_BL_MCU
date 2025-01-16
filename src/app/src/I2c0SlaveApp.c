@@ -50,6 +50,7 @@ const uint8_t gu8AllowedDataAddress[CMD_SIZE] =
     CMD_TP_ID_GET,
     CMD_DISPLAY_ID_GET,
     CMD_DISPLAY_BL_CONTROL,
+   CMD_UPGRADE_FW_PARAMETER,
     CMD_FORCE_RST,
     CMD_FIDM_PROGRAM_UPDATE,
     CMD_BL_STATUS,
@@ -97,7 +98,7 @@ Bit2 : Reserved
 Bit1 : 0 = No unknown error, 1 = Unknown error.
 Bit0 : 0 = Programming pass, 1 = Programming error.
 ------------------------------------------------------------*/
-static bool I2c0SlaveApp_Rx_Crc16_Check(uint8_t u8PacketLen);
+static bool I2c0SlaveApp_Rx_Crc16_Check(uint16_t u16PacketLen);
 /*---------------------------- Start Program --------------------------------*/
 /******************************************************************************
 ;       Function Name           :   static bool I2c0SlaveApp_Irq_Control(uint8_t u8IrqSwitch)
@@ -467,7 +468,7 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                 #endif
 #else
                 #if AUTO_MATCH_ADDRESS
-                    u32FlashWriteAddr = (uint32_t)((uint32_t)ADDR_START+(uint32_t)((uint32_t)gu16PageCounter*(uint32_t)SIZE_64B));
+                    u32FlashWriteAddr = (uint32_t)((uint32_t)ADDR_START+(uint32_t)((uint32_t)gu16PageCounter*(uint32_t)SIZE_2048B));
                     if(u32FlashWriteAddr < (uint32_t)(ADDR_START + SIZE_TOTAL_BASE))
                 #else
                     u32FlashWriteAddr = ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_2]) << (uint32_t)(SHIFT_BIT_16)) | ((uint32_t)(gu8FlashWriteCmd[PU_ADDR_1]) << (uint32_t)(SHIFT_BIT_8)) | (uint32_t)(gu8FlashWriteCmd[PU_ADDR_0]);
@@ -484,7 +485,7 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
 #if MCU_UPDATE_ONLY
                         (void)I2c0SlaveApp_Flash_Page_Write_Check(FlashRwApp_64B_Page_Write(u32FlashWriteAddr, &gu8FlashWriteCmd[PU_DATA]));        
 #else
-                        if(NodeUpdate_UpdateFunc(u32FlashWriteAddr,SIZE_64B,&gu8FlashWriteCmd[PU_DATA]) == UPDATE_STS_SUCCESS)
+                        if(NodeUpdate_UpdateFunc(u32FlashWriteAddr,SIZE_2048B,&gu8FlashWriteCmd[PU_DATA]) == UPDATE_STS_SUCCESS)
                         {
                             /* Flash write is success */
                             u8BootloaderStatus1Flag |= SET_FLASH_WRITE_SUCCESS;     /* Flash write successful */
@@ -499,7 +500,6 @@ static bool I2c0SlaveApp_Flash_Cmd_Check(uint8_t u8Cmd, uint16_t u16Key0, uint16
                         }
                         else
                         {
-                            
                             /* Flash write is failure */
                             u8BootloaderStatus1Flag &= ~SET_FLASH_WRITE_SUCCESS;    /* Flash is written error */
                             u8BootloaderStatus2Flag |= SET_PROGRAMMING_ERROR;       /* Programming error */
@@ -639,7 +639,7 @@ static void I2c0SlaveApp_Update_Cmd_Check(uint8_t u8Cmd)
     uint16_t u16Key0Temp = 0U, u16Key1Temp = 0U;
 #if (CMD_STYLE == BOSCH_STYLE)
     if((u8Cmd == (uint8_t)(CMD_FLASH_PAGE_WRITE)))
-    {     
+    {
         u16Key0Temp = ((uint16_t)(gu8FlashWriteCmd[P_BOOT_KEY0_H]) << (uint16_t)(SHIFT_BIT_8)) | (uint16_t)(gu8FlashWriteCmd[P_BOOT_KEY0_L]);        
         (void)I2c0SlaveApp_Flash_Cmd_Check(u8Cmd, u16Key0Temp, u16Key1Temp);
     } else if(u8Cmd == (uint8_t)(CMD_APP_MEM_ERASE))
@@ -747,29 +747,29 @@ bool I2c0SlaveApp_Crc32_Check(uint32_t u32Size)
 ;       Source ID               :   GM_BL_I2C_SLA-017
 ******************************************************************************/
 #if CRC16_CHECK
-static bool I2c0SlaveApp_Rx_Crc16_Check(uint8_t u8PacketLen)                    
+static bool I2c0SlaveApp_Rx_Crc16_Check(uint16_t u16PacketLen)                    
 {
     bool bCheck = false;
     uint16_t u16CalculateCrc16, u16HostCrc16;
     uint16_t u16NibbleH, u16NibbleL;
 
     (void)(bCheck);
-    u16NibbleH = (uint16_t)(u8PacketLen) - (uint16_t)(LEN_CRC16_H);
-    u16NibbleL = (uint16_t)(u8PacketLen) - (uint16_t)(LEN_CRC16_H) - (uint16_t)(LEN_CRC16_L);
+    u16NibbleH = u16PacketLen - (uint16_t)(LEN_CRC16_H);
+    u16NibbleL = u16PacketLen - (uint16_t)(LEN_CRC16_H) - (uint16_t)(LEN_CRC16_L);
     
-    if(u8PacketLen == (uint8_t)CMD_MEM_UNLOCK_MAX)
+    if(u16PacketLen == CMD_MEM_UNLOCK_MAX)
     {
         u16HostCrc16 = ((uint16_t)(gu8MemUnlockCmd[u16NibbleH]) << (uint16_t)(SHIFT_BIT_8)) | (uint16_t)(gu8MemUnlockCmd[u16NibbleL]);
-        u16CalculateCrc16 = CrcApp_Crc16_Calculation(gu8MemUnlockCmd+1, ((uint32_t)(u8PacketLen) - (uint32_t)(LEN_CRC16) -1));
-    }else if(u8PacketLen == (uint8_t)CMD_MEM_ERASE_MAX)
+        u16CalculateCrc16 = CrcApp_Crc16_Calculation(gu8MemUnlockCmd+1, ((uint32_t)(u16PacketLen) - (uint32_t)(LEN_CRC16) -1));
+    }else if(u16PacketLen == CMD_MEM_ERASE_MAX)
     {        
         u16HostCrc16 = ((uint16_t)(gu8MemEraseCmd[u16NibbleH]) << (uint16_t)(SHIFT_BIT_8)) | (uint16_t)(gu8MemEraseCmd[u16NibbleL]);
         u16CalculateCrc16 = CrcApp_Crc16_Calculation(&gu8MemEraseCmd[CMD_DATA_START], CMD_DATA_LENGTH);
     }
-    else    /* u8PacketLen == CMD_FLASH_WRITE_MAX */
+    else    /* u16PacketLen == CMD_FLASH_WRITE_MAX */
     {
         u16HostCrc16 = ((uint16_t)(gu8FlashWriteCmd[u16NibbleH]) << (uint16_t)(SHIFT_BIT_8)) | (uint16_t)(gu8FlashWriteCmd[u16NibbleL]);
-        u16CalculateCrc16 = CrcApp_Crc16_Calculation(gu8FlashWriteCmd+1, ((uint32_t)(u8PacketLen) - (uint32_t)(LEN_CRC16) -1));
+        u16CalculateCrc16 = CrcApp_Crc16_Calculation(gu8FlashWriteCmd+1, ((uint32_t)(u16PacketLen) - (uint32_t)(LEN_CRC16) -1));
     }
 
     if(u16HostCrc16 != u16CalculateCrc16)
@@ -781,7 +781,7 @@ static bool I2c0SlaveApp_Rx_Crc16_Check(uint8_t u8PacketLen)
         bCheck = true;  /* CRC16 pass */
     }       
 
-    (void)(u8PacketLen);
+    (void)(u16PacketLen);
     return bCheck;  
 }
 #endif
@@ -947,6 +947,15 @@ static void I2c0SlaveApp_Customer_Cmd_Check(uint8_t u8Cmd)
             tsI2cSlaveTx.buf[R_HW_VER_L] = (uint8_t)(AdcApp_AdcToHWVersion_Get() & (uint16_t)(0x00FFU));
             tsI2cSlaveTx.buf[R_HW_VER_H] = (uint8_t)((AdcApp_AdcToHWVersion_Get() & (uint16_t)(0xFF00U)) >> (uint16_t)(SHIFT_BIT_8));
         break;
+       case CMD_UPGRADE_FW_PARAMETER:
+           tsI2cSlaveTx.buf[R_SINGLE_PACKET_DATA_LEN_LSB] = SINGLE_PACKET_DATA_LEN_LSB;
+           tsI2cSlaveTx.buf[R_SINGLE_PACKET_DATA_LEN_MSB] = SINGLE_PACKET_DATA_LEN_MSB;
+           tsI2cSlaveTx.buf[R_POLLING_INTERVAL_LSB] = POLLING_INTERVAL_LSB;
+           tsI2cSlaveTx.buf[R_POLLING_INTERVAL_MSB] = POLLING_INTERVAL_MSB;
+           tsI2cSlaveTx.buf[R_Reserved0] = RESERVED;
+           tsI2cSlaveTx.buf[R_Reserved1] = RESERVED;
+           tsI2cSlaveTx.buf[R_CRC8] = CrcApp_Crc8_Calculation(&tsI2cSlaveTx.buf[1],6);
+       break;
         default:
             /*Nothing*/
         break;
@@ -962,7 +971,6 @@ static void I2c0SlaveApp_Customer_Cmd_Check(uint8_t u8Cmd)
 static uint8_t I2cSlaveApp_Write_Cmd_Parser(st_ring_buffer *ptdRingBuffer)
 {
     uint8_t u8Return;
-
     switch(ptdRingBuffer->u8Buf[ptdRingBuffer->u16Head])
     {
         case CMD_DISPLAY_BL_CONTROL:
@@ -1019,7 +1027,6 @@ static uint8_t I2cSlaveApp_Write_Cmd_Parser(st_ring_buffer *ptdRingBuffer)
 
         case CMD_FLASH_PAGE_WRITE:
             (void)slave_i2c_ringbuffer_pull(ptdRingBuffer, gu8FlashWriteCmd, (uint16_t)CMD_FLASH_WRITE_MAX); 
-            
             if(
                 ((u8BootloaderStatus1Flag & SET_APP_UNLOCK) == (uint8_t)(SET_APP_UNLOCK)) &&
                 ((u8BootloaderStatus1Flag & SET_APP_ERASE) == (uint8_t)(SET_APP_ERASE))
@@ -1030,7 +1037,6 @@ static uint8_t I2cSlaveApp_Write_Cmd_Parser(st_ring_buffer *ptdRingBuffer)
                     (VALUE_CLEAN==st_u8GoSleepFlag)    
                     )
                 {
-
                     if(I2c0SlaveApp_Rx_Crc16_Check(CMD_FLASH_WRITE_MAX) == true)
                     {
                         /* If CRC16 error flag is enabled, then set CRC16 error is disabled. */
@@ -1169,7 +1175,7 @@ bool I2c0SlaveApp_Callback(SERCOM_I2C_SLAVE_TRANSFER_EVENT event, uintptr_t cont
     uint8_t u8CmdCechkIndex = 0;
     bool bIsDataAddrMateched = false;
     sercom_registers_t *ptdReg = i2c_channel_reg(tsI2cSlaveDev.channel);
-    
+
     if((uint8_t)(event) == (uint8_t)(SERCOM_I2C_SLAVE_ADDR_MATCH))
     {
         if((get_slave_i2c_status(tsI2cSlaveDev.channel) & SERCOM_I2CS_STATUS_DIR_Msk) == SERCOM_I2CS_STATUS_DIR_Msk)
@@ -1177,7 +1183,6 @@ bool I2c0SlaveApp_Callback(SERCOM_I2C_SLAVE_TRANSFER_EVENT event, uintptr_t cont
             gPacketDir = (uint8_t)(I2C_READ);
             (void)slave_i2c_ringbuffer_pull(&tsI2cSlaveRx, &u8CmdTemp, (uint16_t)CMD_OTHER_MAX);
             (void)I2c0SlaveApp_Customer_Cmd_Check(u8CmdTemp);
-
         }
         else
         {
@@ -1190,12 +1195,10 @@ bool I2c0SlaveApp_Callback(SERCOM_I2C_SLAVE_TRANSFER_EVENT event, uintptr_t cont
     }
     else if((uint8_t)(event) == (uint8_t)(SERCOM_I2C_SLAVE_RX_READY))
     {
-
         if(tsI2cSlaveDev.FirstByteCheckFinished == false)
         {
             tsI2cSlaveDev.FirstByteCheckFinished = true;
             u8RecDataTemp = ptdReg->I2CS.SERCOM_DATA;
-            
             while(u8CmdCechkIndex < CMD_SIZE)
             {
                 if(u8RecDataTemp == gu8AllowedDataAddress[u8CmdCechkIndex])

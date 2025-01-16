@@ -10,8 +10,10 @@
 #define FlashRwApp_H
 /*---------------------------- Define Constant -------------------------------*/
 #define		SIZE_ERASE_256B				256U
-#define		SIZE_READ_THRESHOLD			256U		
-#define		SIZE_A_PAGE					64U
+#define		SIZE_READ_THRESHOLD			256U	
+#define		SIZE_A_PAGE					SIZE_A_PAGE_64B
+#define		SIZE_A_PAGE_64B				64U	
+#define		SIZE_A_PAGE_256B			64U
 #define		SIZE_FIDM_VER				4U
 #define 	FLASH_RW_APP_LOCK_TEST		false
 /*---------------------------- Enum Declare ----------------------------------*/

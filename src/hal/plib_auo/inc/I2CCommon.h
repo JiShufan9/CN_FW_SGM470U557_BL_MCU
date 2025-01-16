@@ -33,7 +33,7 @@ extern "C" {
 
 #define I2C_DEFAULT     0U
 #define FREQ_REF        48000000UL
-#define QUEUE_MAX       150U
+#define QUEUE_MAX       2056U
 
 typedef enum
 {
@@ -62,8 +62,8 @@ typedef struct
 typedef struct
 {
     uint8_t u8Buf[QUEUE_MAX];
-    uint8_t u16Head;
-    uint8_t u16Tail;
+    uint16_t u16Head;
+    uint16_t u16Tail;
     uint16_t u16Length;
     uint16_t u16LengthMax;
 }st_ring_buffer;
