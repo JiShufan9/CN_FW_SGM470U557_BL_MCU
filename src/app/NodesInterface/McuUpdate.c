@@ -63,6 +63,9 @@ uint8_t McuUpdate_EarseFunc(void)
 uint8_t McuUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
 {
     uint8_t ret;
+    #if DEBUG_UART
+    Uart1App_String_Show("write");
+    #endif
     if((addr + len) <= SIZE_APP_BASE)
     {
         FlashRwApp_64B_Page_Write((addr + ADDR_APP_START), buf);
