@@ -25,6 +25,7 @@
 #define     CMD_TP_ID_GET               (uint8_t)(0x04U)
 #define     CMD_DISPLAY_ID_GET          (uint8_t)(0x05U)
 #define     CMD_DISPLAY_BL_CONTROL      (uint8_t)(0x20U)
+#define     CMD_UPGRADE_FW_PARAMETER    (uint8_t)(0xC8U)
 #define     CMD_FORCE_RST               (uint8_t)(0x31U)
 #define     CMD_FIDM_PROGRAM_UPDATE     (uint8_t)(0x34U)
 #define     CMD_BL_STATUS               (uint8_t)(0x80U)
@@ -32,7 +33,7 @@
 #define     CMD_APP_MEM_ERASE           (uint8_t)(0x88U)
 #define     CMD_FLASH_PAGE_WRITE        (uint8_t)(0x8DU)
 
-#define     CMD_SIZE                    (uint8_t)(11U)
+#define     CMD_SIZE                    (uint8_t)(12U)
 /* ==================== Cmd Length ====================== */
 #define CMD_OTHER_MAX                   1U
 /* Write command */
@@ -42,7 +43,8 @@
 #define CMD_FORCE_RST_MAX               2U
 #define CMD_MEM_UNLOCK_MAX              5U
 #define CMD_MEM_ERASE_MAX               6U
-#define CMD_FLASH_WRITE_MAX             72U
+// #define CMD_FLASH_WRITE_MAX             72U
+#define CMD_FLASH_WRITE_MAX             2056U
 #define CMD_DATA_SIZE_MAX               74U
 #define CMD_DATA_LENGTH                 3U
 #define CMD_DATA_CRC_L                  4U
@@ -63,6 +65,7 @@
 #define     UNIT_KB             1024U
 #define     SIZE_64B            64U
 #define     SIZE_256B           256U
+#define     SIZE_2048B          2048U    
 #define     SIZE_1KB            (1U * UNIT_KB)
 #define     SIZE_4KB            (4U * UNIT_KB)
 #define     SIZE_64KB           (64U * UNIT_KB)
@@ -138,6 +141,15 @@
 
 #define BL_CMD_CRC_SIZE     0x0004U
 
+/*OTA每帧数据长度	2048Bytes*/
+#define SINGLE_PACKET_DATA_LEN_LSB				0x00U
+#define SINGLE_PACKET_DATA_LEN_MSB				0x08U
+/*OTA轮询间隔	5ms*/
+#define POLLING_INTERVAL_LSB					0x05U
+#define POLLING_INTERVAL_MSB					0x00U
+
+#define RESERVED								0x00U
+
 /*---------------------------- Declare Enum ---------------------------------*/
 enum SizeAssign{
     SIZE_FW_CHKSUM = 8U,
@@ -146,7 +158,7 @@ enum SizeAssign{
 
 enum DeviceId{
     ID_TP = 0x99U,
-    ID_DISPLAY = 0xC7U
+    ID_DISPLAY = 0xC5U
 };
 
 enum DefaultValures{
@@ -235,9 +247,18 @@ enum ReadPackets{
     R_FIDM_VER_L = 0U,
     R_FIDM_VER_H = 1U,
 
-    /* Controller ID */
+/* Controller ID */
     R_TP_MCU_ID = 0U,
-    R_DISPLAY_ID = 0U
+    R_DISPLAY_ID = 0U,
+
+/* Upgrade Firmware Parameter*/
+    R_CRC8 = 0U,
+    R_SINGLE_PACKET_DATA_LEN_LSB = 1U,
+    R_SINGLE_PACKET_DATA_LEN_MSB = 2U,
+    R_POLLING_INTERVAL_LSB = 3U,
+    R_POLLING_INTERVAL_MSB = 4U,
+    R_Reserved0 = 5U,
+    R_Reserved1 = 6U
 };
 /*---------------------------- Support Function ------------------------------*/
 #define     I2c0SlaveApp_Irq_Disable(u8Irq)     (NVIC_DisableIRQ(u8Irq))
