@@ -44,6 +44,12 @@
 
 #define OP_ERR		0U
 #define OP_SUCCESS	1U
+
+#define		SIZE_A_PAGE					SIZE_A_PAGE_64B
+#define		SIZE_A_PAGE_64B				64U
+#define		SIZE_A_PAGE_128B			128U
+#define		SIZE_A_PAGE_256B			256U
+
 /*---------------------------- Switch Support Function ----------------------*/
 #define		MICROCHIP_ARM_ENV	TRUE
 #define     AUTO_MATCH_ADDRESS  TRUE
