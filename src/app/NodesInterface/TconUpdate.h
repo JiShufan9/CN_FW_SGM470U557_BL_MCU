@@ -29,8 +29,8 @@
 #define TCON_FW_START_ADDR  2U
 #define SIZE_TCON_FW    (512U * 1024U)
 #define TCON_EXT_FLS_BLOCK_SIZE 4096U
-#define TCON_WRITE_BUF_LEN      64U
-#define TCON_READ_BACK_BUF_LEN  64U
+#define TCON_WRITE_BUF_LEN      SIZE_A_PAGE
+#define TCON_READ_BACK_BUF_LEN  SIZE_A_PAGE
 /* ************************************************************************** */
 /* Section: Enum                                                              */
 /* ************************************************************************** */

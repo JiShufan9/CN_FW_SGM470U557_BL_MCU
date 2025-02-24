@@ -22,8 +22,8 @@
 /* ************************************************************************** */
 /* Section: Global Variable                                                   */
 /* ************************************************************************** */
-uint8_t TconM_u8TxBuf[70];
-uint8_t TconM_u8RxBuf[70];
+uint8_t TconM_u8TxBuf[SIZE_A_PAGE + 6];
+uint8_t TconM_u8RxBuf[SIZE_A_PAGE + 6];
 /* ************************************************************************** */
 /* Section: Static Functions Declaration                                      */
 /* ************************************************************************** */
@@ -389,7 +389,7 @@ uint8_t TconM_ProgramData(uint8_t* binBuffer, uint32_t addr, uint32_t size)
 {
     uint8_t result = TRUE;
     uint32_t tempSize = size;
-    uint16_t maxWriteBuffer = 64U;
+    uint16_t maxWriteBuffer = SIZE_A_PAGE;
     while (tempSize > 0)
     {
         result &= TconM_WriteEnable();           //                          AN Step 7-8
