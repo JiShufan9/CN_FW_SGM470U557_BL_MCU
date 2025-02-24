@@ -179,7 +179,7 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
 {
     uint8_t ret = UPDATE_STS_SUCCESS;
     uint8_t u8Temp;
-    uint8_t gu8group = len / 64;
+    uint8_t gu8group = len / SIZE_A_PAGE;
     for(int j = 0; j < gu8group; j ++){
         if (FALSE == u8HeadInfoGetFinished)
         {
@@ -252,12 +252,12 @@ uint8_t NodeUpdate_UpdateFunc(uint32_t addr,uint32_t len,uint8_t * buf)
         {
             uint32_t u32WriteAddr,u32WriteLen;
 
-            u32WriteAddr = addr + j * 64;
-            u32WriteLen = 64;
+            u32WriteAddr = addr + j * SIZE_A_PAGE;
+            u32WriteLen = SIZE_A_PAGE;
             uint8_t count = sizeof(sUpdateNodeArr)/sizeof(TsNode);
             for (uint8_t i = 0; i < count; i++)
             {
-                if(/* (sUpdateNodeArr[u8NodeIdx].u8NodeUpdateFlag) && */(u32WriteLen >= 0U) && (u32WriteAddr >= sUpdateNodeArr[i].PartationStartAddr) && ((u32WriteAddr + u32WriteLen) <= (sUpdateNodeArr[i].PartationStartAddr + sUpdateNodeArr[i].PartationLen)))
+                if((u32WriteLen >= 0U) && (u32WriteAddr >= sUpdateNodeArr[i].PartationStartAddr) && ((u32WriteAddr + u32WriteLen) <= (sUpdateNodeArr[i].PartationStartAddr + sUpdateNodeArr[i].PartationLen)))
                 {
                     u8Temp = (sUpdateNodeArr[i].pUpdateFunc)((u32WriteAddr - sUpdateNodeArr[i].PartationStartAddr), u32WriteLen ,(buf + u32WriteLen * j));
                     if(u8Temp != OP_SUCCESS)

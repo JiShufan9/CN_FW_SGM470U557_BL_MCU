@@ -1236,7 +1236,9 @@ bool I2c0SlaveApp_Callback(SERCOM_I2C_SLAVE_TRANSFER_EVENT event, uintptr_t cont
     }
     else if((uint8_t)(event) == (uint8_t)(SERCOM_I2C_SLAVE_STOP_RECEIVED))
     {
+        slave_i2c_stop(SERCOM_CH0);
         I2cSlaveApp_Handshake_Finish(&tsI2cSlaveRx);
+        slave_i2c_start(SERCOM_CH0);
         bReturn = true;
     }
     else if((uint8_t)(event) == (uint8_t)(SERCOM_I2C_SLAVE_ERROR_EVENT))

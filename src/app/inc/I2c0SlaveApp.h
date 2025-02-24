@@ -143,7 +143,7 @@
 /*OTA每帧数据长度	2048Bytes*/
 #define SINGLE_PACKET_DATA_LEN_LSB				0x00U
 #define SINGLE_PACKET_DATA_LEN_MSB				0x08U
-/*OTA轮询间隔	10ms*/
+/*OTA轮询间隔	5ms*/
 #define POLLING_INTERVAL_LSB					0x05U
 #define POLLING_INTERVAL_MSB					0x00U
 
